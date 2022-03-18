@@ -19,6 +19,12 @@ class CoveragePathPlan(Model):
 
         self.grid = MultiGrid(width, height, torus=False)
 
+        # Place a dead cell at each location.
+        for (contents, x, y) in self.grid.coord_iter():
+            cell = Cell((x, y), self.random.getrandbits(5) == 0, self)
+            self.grid.place_agent(cell, (x, y))
+            # self.schedule.add(cell)
+
         
         robot_pos = [
             (1,6),
@@ -35,11 +41,7 @@ class CoveragePathPlan(Model):
             self.grid.place_agent(robot, pos)
             self.schedule.add(robot)
 
-        # Place a dead cell at each location.
-        for (contents, x, y) in self.grid.coord_iter():
-            cell = Cell((x, y), self)
-            self.grid.place_agent(cell, (x, y))
-            # self.schedule.add(cell)
+
 
         self.running = True
 

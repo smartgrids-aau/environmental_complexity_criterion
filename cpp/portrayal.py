@@ -18,8 +18,8 @@ def portrayCell(agent):
             "Layer": 0,
             "x": agent.x,
             "y": agent.y,
-            "Color": "black" if agent.isVisited else "white",
-            "text": str(agent.visitCount),
+            "Color": "black" if agent.isBarrier else "green" if agent.isVisited else "white",
+            "text": str(agent.visitCount) if not agent.isBarrier else '',
             "text_color": "white"
         }
     else:
