@@ -8,6 +8,7 @@ from mesa.space import MultiGrid
 import numpy as np
 from PIL import Image
 from cpp.cell import Cell
+from cpp.planners.greedy import GreedyPlanner
 from cpp.robot import Robot
 
 class CoveragePathPlan(Model):
@@ -18,8 +19,9 @@ class CoveragePathPlan(Model):
         Create a new playing area of (width, height) cells.
         """
         self.schedule = BaseScheduler(self)
-
         self.grid = MultiGrid(width, height, torus=False)
+        
+        planner = GreedyPlanner()
 
         if path_to_map!='':
             map = self.get_area_map(path_to_map)
@@ -49,7 +51,7 @@ class CoveragePathPlan(Model):
         robot_pos = self.gen_coordinates(width, height, robot_count, map)
         i = 0
         for pos in robot_pos:
-            robot = Robot(i, pos, self)
+            robot = Robot(i, pos, self, planner)
             self.grid.place_agent(robot, pos)
             self.schedule.add(robot)
             i+=1
