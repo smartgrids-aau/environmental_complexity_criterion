@@ -1,4 +1,4 @@
-from mesa.visualization.modules import CanvasGrid
+from mesa.visualization.modules import CanvasGrid, ChartModule
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import UserSettableParameter
 
@@ -24,6 +24,12 @@ model_params = {
     "path_to_map": 'cpp\maps\map1.png'
 }
 
+chart_element = ChartModule(
+    [
+        {"Label": "Empty", "Color": "#3349FF"}
+    ]
+)
+
 server = ModularServer(
-    CoveragePathPlan, [canvas_element], "Coverage Path Planning", model_params
+    CoveragePathPlan, [canvas_element, chart_element], "Coverage Path Planning", model_params
 )

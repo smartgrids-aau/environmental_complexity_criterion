@@ -1,6 +1,6 @@
 from dbm import dumb
 from importlib.resources import contents
-from itertools import combinations, combinations_with_replacement
+from operator import le
 from timeit import repeat
 from mesa import Model
 from mesa.time import BaseScheduler
@@ -10,23 +10,28 @@ from PIL import Image
 from cpp.cell import Cell
 from cpp.planners.greedy import GreedyPlanner
 from cpp.robot import Robot
+from mesa.datacollection import DataCollector
+
+def get_num_empty_cells(model):
+    """return number of rich agents"""
+
+    all = list(model.grid.__iter__())
+    empty_cells = [content[0] for content in model.grid if (not content[0].isVisited and not content[0].isObstacle)]
+    print(len(empty_cells), len(all))
+    return len(empty_cells)
 
 class CoveragePathPlan(Model):
     AREA, OBS = 1 , 0
 
     def __init__(self, width=40, height=40, robot_count = 8, path_to_map = ''):
-        """
-        Create a new playing area of (width, height) cells.
-        """
+
         self.schedule = BaseScheduler(self)
         self.grid = MultiGrid(width, height, torus=False)
-        
         planner = GreedyPlanner()
 
         if path_to_map!='':
             map = self.get_area_map(path_to_map)
             print(map.shape)
-
 
         for (contents, x, y) in self.grid.coord_iter():
             if path_to_map == '':
@@ -35,7 +40,6 @@ class CoveragePathPlan(Model):
                 cell = Cell((x, y), map[x,y] == self.OBS, self)
             self.grid.place_agent(cell, (x, y))
 
-        
         # robot_pos = [
         #     (1,6),
         #     (9,1),
@@ -45,7 +49,7 @@ class CoveragePathPlan(Model):
         #     (5,6),
         #     (2,6),
         #     (14,33),
-        #     # (49,49),
+        #     (49,49),
         #     (34,20)
         # ]
         robot_pos = self.gen_coordinates(width, height, robot_count, map)
@@ -56,10 +60,19 @@ class CoveragePathPlan(Model):
             self.schedule.add(robot)
             i+=1
 
+        self.datacollector = DataCollector(
+            model_reporters={
+                "Empty": get_num_empty_cells
+            }
+        )
+
+        self.datacollector.collect(self)
         self.running = True
+
 
     def step(self):
         self.schedule.step()
+        self.datacollector.collect(self)
         
         self.running = False
         for (contents, x, y) in self.grid.coord_iter():
@@ -67,6 +80,7 @@ class CoveragePathPlan(Model):
             if not cell.isObstacle and not cell.isVisited:
                 self.running = True
                 break
+
 
     def gen_coordinates(self, width, height, count, map):
         seen = set()
