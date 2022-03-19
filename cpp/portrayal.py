@@ -1,4 +1,6 @@
+from typing import NamedTuple
 from cpp.cell import Cell
+from cpp.color import Color, compute_alpha, rgba_to_rgb
 
 
 def portrayCell(agent):
@@ -18,7 +20,9 @@ def portrayCell(agent):
             "Layer": 0,
             "x": agent.x,
             "y": agent.y,
-            "Color": "black" if agent.isBarrier else "green" if agent.isVisited else "white",
+            "Color": "black" if agent.isBarrier 
+                    else rgba_to_rgb(Color(0,117,0), compute_alpha(agent.visitCount)) if agent.isVisited 
+                    else 'white',
             "text": str(agent.visitCount) if not agent.isBarrier else '',
             "text_color": "white"
         }
@@ -32,3 +36,5 @@ def portrayCell(agent):
             "y": agent.y,
             "Color": agent.color,
         }
+
+
