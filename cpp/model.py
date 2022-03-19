@@ -13,12 +13,11 @@ from cpp.robot import Robot
 from mesa.datacollection import DataCollector
 
 def get_num_empty_cells(model):
-    """return number of rich agents"""
-
     all = list(model.grid.__iter__())
     empty_cells = [content[0] for content in model.grid if (not content[0].isVisited and not content[0].isObstacle)]
     print(len(empty_cells), len(all))
     return len(empty_cells)
+
 
 class CoveragePathPlan(Model):
     AREA, OBS = 1 , 0
@@ -63,7 +62,8 @@ class CoveragePathPlan(Model):
         self.datacollector = DataCollector(
             model_reporters={
                 "Empty": get_num_empty_cells
-            }
+            },
+            agent_reporters={"first_visits": lambda x: x.first_visits},
         )
 
         self.datacollector.collect(self)

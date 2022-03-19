@@ -1,4 +1,4 @@
-from mesa.visualization.modules import CanvasGrid, ChartModule
+from mesa.visualization.modules import CanvasGrid, ChartModule, BarChartModule
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import UserSettableParameter
 
@@ -30,6 +30,12 @@ chart_element = ChartModule(
     ]
 )
 
+agent_bar = BarChartModule(
+    [{"Label": "first_visits", "Color": '#46FF33'}],
+    scope="agent",
+    sorting="neither"
+)
+
 server = ModularServer(
-    CoveragePathPlan, [canvas_element, chart_element], "Coverage Path Planning", model_params
+    CoveragePathPlan, [canvas_element, chart_element, agent_bar], "Coverage Path Planning", model_params
 )
