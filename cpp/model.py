@@ -5,14 +5,15 @@ from timeit import repeat
 from mesa import Model
 from mesa.time import BaseScheduler
 from mesa.space import MultiGrid
-
+import numpy as np
+from PIL import Image
 from cpp.cell import Cell
 from cpp.robot import Robot
 
 
 class CoveragePathPlan(Model):
 
-    def __init__(self, width=40, height=40, robot_count = 8):
+    def __init__(self, width=40, height=40, robot_count = 8, path_to_map = ''):
         """
         Create a new playing area of (width, height) cells.
         """
@@ -23,9 +24,16 @@ class CoveragePathPlan(Model):
 
         self.grid = MultiGrid(width, height, torus=False)
 
+        if path_to_map!='':
+            map = self.get_area_map(path_to_map)
+            print(map.shape)
+
         # Place a dead cell at each location.
         for (contents, x, y) in self.grid.coord_iter():
-            cell = Cell((x, y), self.random.getrandbits(5) == 0, self)
+            if path_to_map == '':
+                cell = Cell((x, y), self.random.getrandbits(5) == 0, self)
+            else:
+                cell = Cell((x, y), not bool(map[x,y]), self)
             self.grid.place_agent(cell, (x, y))
             # self.schedule.add(cell)
 
@@ -78,3 +86,20 @@ class CoveragePathPlan(Model):
         return seen
             
 
+    def get_area_map(self, path, area=1, obs=0):
+        """
+        Creates an array from a given png-image(path).
+        :param path: path to the png-image
+        :param area: non-obstacles tiles
+        :param obs: obstacle tiles value
+        :return: an array of area(0) and obstacle(-1) tiles
+        """
+        img = Image.open(path)
+        img = img.rotate(-90)
+        img = img.resize((self.grid.width, self.grid.height), Image.NEAREST)
+        map = np.array(img)
+        non_obs = np.array(map).mean(axis=2) != 0
+        map = np.int8(np.zeros(non_obs.shape))
+        map[non_obs] = area
+        map[~non_obs] = obs
+        return map
