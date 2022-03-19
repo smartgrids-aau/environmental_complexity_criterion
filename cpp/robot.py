@@ -1,4 +1,8 @@
+from typing import Set
 from mesa import Agent
+from cpp.cell import Cell
+
+from operator import attrgetter
 
 
 class Robot(Agent):
@@ -13,12 +17,16 @@ class Robot(Agent):
         return self.model.grid.get_neighborhood(self.pos, False, False)
 
     @property
-    def neighbors(self):
-        return list(filter(lambda grid: self.get_cell(grid).isEmpty, self.model.grid.get_neighbors(self.pos, False, False)))
+    def empty_neighbor_cells(self):
+        neighborsContent = self.model.grid.get_neighbors(self.pos, False, False)
+        return list(filter(lambda grid: isinstance(grid, Cell) and grid.isEmpty, neighborsContent))
 
     def get_cell(self, grid):
-        if grid is list:
-            return grid[0] # todo find cell
+        # print(type(grid))
+        if grid is Set:
+            for content in grid:
+                if content is Cell:
+                    return content 
         else:
             return grid
 
@@ -27,7 +35,10 @@ class Robot(Agent):
         return self.model.grid[self.pos][0]
 
     def step(self):
-        destination = self.get_cell(self.random.choice(self.neighbors))
+        # destination = self.get_cell(self.random.choice(self.neighbors))
+        choices = self.empty_neighbor_cells
+        min_value = min(choice.visitCount for choice in choices)
+        destination = self.random.choice([cell for cell in choices if cell.visitCount == min_value])
 
         self.model.grid.move_agent(self, destination.pos)
         destination.incrementVisitCount()
