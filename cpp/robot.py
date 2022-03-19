@@ -37,10 +37,11 @@ class Robot(Agent):
     def step(self):
         # destination = self.get_cell(self.random.choice(self.neighbors))
         choices = self.empty_neighbor_cells
-        min_value = min(choice.visitCount for choice in choices)
-        destination = self.random.choice([cell for cell in choices if cell.visitCount == min_value])
+        if len(choices) > 0:
+            min_value = min(choice.visitCount for choice in choices)
+            destination = self.random.choice([cell for cell in choices if cell.visitCount == min_value])
 
-        self.model.grid.move_agent(self, destination.pos)
-        destination.incrementVisitCount()
+            self.model.grid.move_agent(self, destination.pos)
+            destination.incrementVisitCount()
             
 

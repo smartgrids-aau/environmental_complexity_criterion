@@ -1,3 +1,7 @@
+from dbm import dumb
+from importlib.resources import contents
+from itertools import combinations, combinations_with_replacement
+from timeit import repeat
 from mesa import Model
 from mesa.time import BaseScheduler
 from mesa.space import MultiGrid
@@ -8,7 +12,7 @@ from cpp.robot import Robot
 
 class CoveragePathPlan(Model):
 
-    def __init__(self, width=50, height=50):
+    def __init__(self, width=40, height=40, robot_count = 8):
         """
         Create a new playing area of (width, height) cells.
         """
@@ -26,22 +30,25 @@ class CoveragePathPlan(Model):
             # self.schedule.add(cell)
 
         
-        robot_pos = [
-            (1,6),
-            (10,26),
-            (40,6),
-            (42,23),
-            (42,28),
-            (12,6),
-            (34,33)
-        ]
-        for i in range(len(robot_pos)):
-            pos = robot_pos[i]
+        # robot_pos = [
+        #     (1,6),
+        #     (9,1),
+        #     (30,6),
+        #     (32,23),
+        #     (32,28),
+        #     (5,6),
+        #     (2,6),
+        #     (14,33),
+        #     # (49,49),
+        #     (34,20)
+        # ]
+        robot_pos = self.gen_coordinates(width, height, robot_count)
+        i = 0
+        for pos in robot_pos:
             robot = Robot(i, pos, self)
             self.grid.place_agent(robot, pos)
             self.schedule.add(robot)
-
-
+            i+=1
 
         self.running = True
 
@@ -50,3 +57,24 @@ class CoveragePathPlan(Model):
         Have the scheduler advance each cell by one step
         """
         self.schedule.step()
+        
+        self.running = False
+        for (contents, x, y) in self.grid.coord_iter():
+            cell = contents[0] if isinstance(contents[0], Cell) else contents[1]
+            if not cell.isBarrier and not cell.isVisited:
+                self.running = True
+                break
+
+    def gen_coordinates(self, width, height, count):
+        seen = set()
+
+        for _ in range(count):
+            x = self.random.randint(0, width-1)
+            y = self.random.randint(0, height-1)
+            while (x, y) in seen:
+                x = self.random.randint(0, width-1)
+                y = self.random.randint(0, height-1)
+            seen.add((x, y))
+        return seen
+            
+
