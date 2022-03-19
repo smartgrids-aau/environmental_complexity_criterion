@@ -20,10 +20,10 @@ def portrayCell(agent):
             "Layer": 0,
             "x": agent.x,
             "y": agent.y,
-            "Color": "black" if agent.isBarrier 
+            "Color": "black" if agent.isObstacle 
                     else rgba_to_rgb(Color(0,117,0), compute_alpha(agent.visitCount)) if agent.isVisited 
                     else 'white',
-            "text": str(agent.visitCount) if not agent.isBarrier else '',
+            "text": str(agent.visitCount) if not agent.isObstacle else '',
             "text_color": "white"
         }
     else:
