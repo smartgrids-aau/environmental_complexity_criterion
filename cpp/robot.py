@@ -1,5 +1,8 @@
 from mesa import Agent
 
+from cpp.cell import Cell
+from cpp.color import Color
+
 
 
 class Robot(Agent):
@@ -8,16 +11,24 @@ class Robot(Agent):
         print(pos)
         self.x, self.y = pos
         self.planner = planner
-        self.color = "#"+''.join([self.random.choice('0123456789ABCDEF') for j in range(6)])
+        self.color = Color.random(self.random)
 
     @property
     def cell(self):
         return self.model.grid[self.pos][0]
 
+    @property
+    def empty_neighbor_cells(self):
+        neighborsContent = self.model.grid.get_neighbors(self.pos, False, False)
+        return list(filter(lambda grid: isinstance(grid, Cell) and grid.isEmpty, neighborsContent))
+
     def step(self):
-        destination = self.planner.next_destination(self)
-        if destination != None:
-            self.model.grid.move_agent(self, destination.pos)
-            destination.incrementVisitCount()
+        choices = self.empty_neighbor_cells
+        if len(choices) > 0:
+            destination = self.planner.next_destination(self, choices)
+
+            if destination != None:
+                self.model.grid.move_agent(self, destination.pos)
+                destination.incrementVisitCount()
             
 

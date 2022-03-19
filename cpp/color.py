@@ -1,3 +1,5 @@
+from random import Random
+
 class Color():
     def __init__(self, r:int, g:int, b:int):
         self.r = int(r)
@@ -7,12 +9,18 @@ class Color():
     def hex_format(self):
         return '#{:02X}{:02X}{:02X}'.format(self.r, self.g, self.b)
 
-def rgba_to_rgb(color: Color, alpha, back_color = Color(255, 255, 255)):
-    return Color(
-        (1 - alpha) * back_color.r + alpha * color.r,
-        (1 - alpha) * back_color.g + alpha * color.g,
-        (1 - alpha) * back_color.b + alpha * color.b
-    ).hex_format()
+    def with_alpha(self, alpha):
+        back_color = Color(255, 255, 255)
+        return Color(
+            (1 - alpha) * back_color.r + alpha * self.r,
+            (1 - alpha) * back_color.g + alpha * self.g,
+            (1 - alpha) * back_color.b + alpha * self.b
+        ).hex_format()
+
+    @staticmethod
+    def random(random: Random):
+        return "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+
 
 def compute_alpha(value, min_alpha = 0.3, step_count = 5):
     fraction_alpha = 1 - min_alpha
