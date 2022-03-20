@@ -33,7 +33,8 @@ chart_element = ChartModule(
 agent_bar = BarChartModule(
     [{"Label": "first_visits", "Color": '#46FF33'}],
     scope="agent",
-    sorting="neither"
+    sorting="ascending",
+    sort_by='unique_id'
 )
 
 server = ModularServer(

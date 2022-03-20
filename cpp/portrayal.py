@@ -34,6 +34,8 @@ def portrayCell(agent):
             "x": agent.x,
             "y": agent.y,
             "Color": agent.color,
+            "text": agent.unique_id,
+            "text_color": "white"
         }
 
 
