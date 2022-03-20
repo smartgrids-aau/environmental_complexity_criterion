@@ -1,6 +1,7 @@
 from mesa.visualization.modules import CanvasGrid, ChartModule
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import UserSettableParameter
+from cpp.planners.greedy import GreedyPlanner
 
 from cpp.portrayal import portrayCell
 from cpp.model import CoveragePathPlan
@@ -15,6 +16,7 @@ model_params = {
         "slider", "Robots Count", 8, 1, 50
     ),
     "path_to_map": 'cpp\maps\star.png',
+    'planner': GreedyPlanner(),
     'seed': 7
 }
 

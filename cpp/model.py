@@ -19,12 +19,12 @@ def get_num_empty_cells(model):
 class CoveragePathPlan(Model):
     AREA, OBS = 1 , 0
 
-    def __init__(self, width=40, height=40, robot_count = 8, path_to_map = '', seed = None):
+    def __init__(self, width=40, height=40, robot_count = 8, path_to_map = '', planner= GreedyPlanner(), seed = None):
 
         self._seed = seed
         self.schedule = BaseScheduler(self)
         self.grid = MultiGrid(width, height, torus=False)
-        planner = GreedyPlanner()
+        self.planner = planner
 
         if path_to_map!='':
             map = self.get_area_map(path_to_map)
