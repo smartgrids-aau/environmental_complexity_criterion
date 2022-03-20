@@ -1,9 +1,10 @@
-from mesa.visualization.modules import CanvasGrid, ChartModule, BarChartModule
+from mesa.visualization.modules import CanvasGrid, ChartModule
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import UserSettableParameter
 
 from cpp.portrayal import portrayCell
 from cpp.model import CoveragePathPlan
+from modules.ColorfullBarChartVisualization import ColorfullBarChartModule
 
 width, height = 25,25
 # cell_size = 12
@@ -26,15 +27,17 @@ model_params = {
 
 chart_element = ChartModule(
     [
-        {"Label": "Empty", "Color": "#3349FF"}
+        {"Label": "Uncovered Cells", "Color": "#3349FF"}
     ]
 )
 
-agent_bar = BarChartModule(
-    [{"Label": "first_visits", "Color": '#46FF33'}],
+agent_bar = ColorfullBarChartModule(
+    [{"Label": "first visits"}],
     scope="agent",
     sorting="ascending",
-    sort_by='unique_id'
+    sort_by='unique_id',
+    canvas_width=700,
+    canvas_height=350
 )
 
 server = ModularServer(

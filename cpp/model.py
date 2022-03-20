@@ -61,9 +61,10 @@ class CoveragePathPlan(Model):
 
         self.datacollector = DataCollector(
             model_reporters={
-                "Empty": get_num_empty_cells
+                "Uncovered Cells": get_num_empty_cells
             },
-            agent_reporters={"first_visits": lambda x: x.first_visits},
+            agent_reporters={"first visits": lambda x: {'value': x.first_visits, 'color': x.color}},
+            # agent_reporters={"first visits": lambda x: x.first_visits},
         )
 
         self.datacollector.collect(self)
