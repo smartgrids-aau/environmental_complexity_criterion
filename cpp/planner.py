@@ -1,8 +1,5 @@
-
-from ast import List
 from cpp.cell import Cell
 from cpp.robot import Robot
-
 
 class Planner:
 

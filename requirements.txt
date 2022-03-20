@@ -1,1 +1,3 @@
-mesa
+mesa (pip install -e git+https://github.com/projectmesa/mesa#egg=mesa)
+numpy
+pillow

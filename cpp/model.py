@@ -1,7 +1,4 @@
-from dbm import dumb
 from importlib.resources import contents
-from operator import le
-from timeit import repeat
 from mesa import Model
 from mesa.time import BaseScheduler
 from mesa.space import MultiGrid
