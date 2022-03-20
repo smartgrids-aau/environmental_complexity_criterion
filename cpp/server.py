@@ -6,24 +6,19 @@ from cpp.portrayal import portrayCell
 from cpp.model import CoveragePathPlan
 from modules.ColorfullBarChartVisualization import ColorfullBarChartModule
 
-width, height = 25,25
-# cell_size = 12
-
-# Make a world that is 50x50, on a 500x500 display.
-canvas_element = CanvasGrid(portrayCell, width, height, 500, 500)
+width, height = 25, 25
 
 model_params = {
     "width": width,
     "height": height,
     "robot_count": UserSettableParameter(
-        "slider",
-        "Robots Count",
-        8,
-        1,
-        100
+        "slider", "Robots Count", 8, 1, 50
     ),
-    "path_to_map": 'cpp\maps\map1.png'
+    "path_to_map": 'cpp\maps\star.png',
+    'seed': 7
 }
+
+canvas_element = CanvasGrid(portrayCell, width, height, 500, 500)
 
 chart_element = ChartModule(
     [
@@ -41,5 +36,8 @@ agent_bar = ColorfullBarChartModule(
 )
 
 server = ModularServer(
-    CoveragePathPlan, [canvas_element, chart_element, agent_bar], "Coverage Path Planning", model_params
+    model_cls= CoveragePathPlan,
+    visualization_elements= [canvas_element, chart_element, agent_bar],
+    name= "Coverage Path Planning",
+    model_params= model_params
 )
