@@ -20,7 +20,7 @@ class Robot(Agent):
 
     @property
     def empty_neighbor_cells(self):
-        neighborsContent = self.model.grid.get_neighbors(self.pos, False, False)
+        neighborsContent = self.model.grid.get_neighbors(self.pos, moore=True, include_center=False)
         return list(filter(lambda grid: isinstance(grid, Cell) and grid.isEmpty, neighborsContent))
 
     def step(self):
