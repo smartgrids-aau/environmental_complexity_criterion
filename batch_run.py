@@ -1,0 +1,75 @@
+from multiprocessing import freeze_support
+from mesa.batchrunner import batch_run
+import pandas as pd
+from cpp.planners.greedy import GreedyPlanner
+from mesa.datacollection import DataCollector
+from cpp.model import CoveragePathPlan
+
+
+def get_max_visited_cell(model):
+    max = 0
+    for (contents, x, y) in model.grid.coord_iter():
+        if contents[0].visitCount > max:
+            max = contents[0].visitCount
+    return max
+
+def get_cells_state(model):
+    visits = [cell[0][0].visitCount for cell in list(model.grid.coord_iter())]
+    return visits
+        
+
+class BatchCoveragePathPlan(CoveragePathPlan):
+
+    def __init__(self, width=40, height=40, robot_count = 8, path_to_map = '', planner= GreedyPlanner(), seed = None):
+        super().__init__(width, height, robot_count, path_to_map, planner, seed)
+
+        self.datacollector = DataCollector(
+            model_reporters={
+                "Max visited": get_max_visited_cell,
+                "final state": get_cells_state
+            },
+            # agent_reporters={"first visits": lambda x: {'value': x.first_visits, 'color': x.color}},
+            # agent_reporters={"first visits": lambda x: x.first_visits},
+        )
+
+# parameter lists for each parameter to be tested in batch run
+br_params = {
+    "width": 25,
+    "height": 25,
+    "robot_count": [3,10, 20],
+    "path_to_map": ["cpp\maps\star.png"],
+    'planner': GreedyPlanner(),
+}
+
+if __name__ == "__main__":
+    data = batch_run(
+        BatchCoveragePathPlan,
+        br_params,
+        iterations=3
+        # model_reporters={"Rich": get_num_rich_agents},
+        # agent_reporters={"Wealth": "wealth"},
+    )
+    br_df = pd.DataFrame(data)
+    br_df.to_csv("batch_run.csv")
+
+    # The commented out code below is the equivalent code as above, but done
+    # via the legacy BatchRunner class. This is a good example to look at if
+    # you want to migrate your code to use `batch_run()` from `BatchRunner`.
+    """
+    br = BatchRunner(
+        BankReservesModel,
+        br_params,
+        iterations=2,
+        max_steps=1000,
+        nr_processes=None,
+        # model_reporters={"Data Collector": lambda m: m.datacollector},
+    )
+    br.run_all()
+    br_df = br.get_model_vars_dataframe()
+    br_step_data = pd.DataFrame()
+    for i in range(len(br_df["Data Collector"])):
+        if isinstance(br_df["Data Collector"][i], DataCollector):
+            i_run_data = br_df["Data Collector"][i].get_model_vars_dataframe()
+            br_step_data = br_step_data.append(i_run_data, ignore_index=True)
+    br_step_data.to_csv("BankReservesModel_Step_Data.csv")
+    """
