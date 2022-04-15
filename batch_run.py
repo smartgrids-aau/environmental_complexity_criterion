@@ -38,7 +38,7 @@ br_params = {
     "width": 25,
     "height": 25,
     "robot_count": [3,10, 20],
-    "path_to_map": ["cpp\maps\star.png"],
+    "path_to_map": ["cpp\maps\star.png", "{rect 8 4, L 7 2 -8 3, rect 6 6}", "{L 20 3 15 3, rect 4 4, rect 2 9}"],
     'planner': GreedyPlanner(),
 }
 
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     data = batch_run(
         BatchCoveragePathPlan,
         br_params,
-        iterations=3
+        iterations=2
     )
     br_df = pd.DataFrame(data)
     if not os.path.exists('results'):
