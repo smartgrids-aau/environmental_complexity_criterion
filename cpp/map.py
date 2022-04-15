@@ -16,10 +16,18 @@ def generate_map_from_png(path, shape):
     map = np.flip(map, axis=0)
     return map
 
-def generate_map_by_pattern(pattern, shape, random):     
-    map = np.ones(shape)
-    obs = pattern[1:-1].split(',')
-    shapes = [Shape.get_shape(re.sub(' +', ' ', ob).strip(), random) for ob in obs]
-    for shape in shapes:
-        shape.draw(map)
-    return map
+def generate_map_by_pattern(pattern, map_shape, random): 
+    attemps = 0
+    while True:
+        try:
+            attemps += 1
+            map = np.ones(map_shape)
+            obs = pattern[1:-1].split(',')
+            shapes = [Shape.get_shape(re.sub(' +', ' ', ob).strip(), random) for ob in obs]
+            for shape in shapes:
+                shape.draw(map)
+            return map
+        except Exception as err:
+            print("error while generating map: {0}".format(err))
+            if attemps > 100:
+                raise Exception(err)

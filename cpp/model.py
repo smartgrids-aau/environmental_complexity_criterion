@@ -32,7 +32,6 @@ class CoveragePathPlan(Model):
                 map = generate_map_by_pattern(map, (self.grid.height, self.grid.width), self.random)
             else:
                 map = generate_map_from_png(map, (self.grid.height, self.grid.width))
-            print(map.shape)
 
         for (_, x, y) in self.grid.coord_iter():
             if map == '':

@@ -37,7 +37,7 @@ class Shape:
             found = self.check_fit_in_map(anchor, map.shape) and not self.check_collision(map, coors)
             failes.add(rand_idx)
             if len(failes) == map.shape[0] * map.shape[1]:
-                raise Exception('Not enough space')
+                raise Exception('Not enough space for shapes in map')
         return coors
 
     def check_fit_in_map(self, anchor, map_shape)->Boolean:
@@ -93,7 +93,6 @@ class L(Shape):
         self.h_thickness = h_thickness
 
     def check_fit_in_map(self, anchor, map_shape)->Boolean:
-        print('anchor', anchor)
         return anchor[0] + self.v_length in range(0, map_shape[0]) and anchor[0] + self.h_thickness * self.sign(self.v_length) in range(0, map_shape[0]) and\
             anchor[1] + self.h_length in range(0, map_shape[1]) and anchor[1] + self.v_thickness * self.sign(self.h_length) in range(0, map_shape[0])
 
