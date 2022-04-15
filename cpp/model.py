@@ -27,34 +27,19 @@ class CoveragePathPlan(Model):
         self.planner = planner
 
         if path_to_map!='':
-            if re.match('^{(.*)}$', path_to_map):
+            if re.match('^{((.|\n)*)}$', path_to_map):
                 map = generate_map_by_pattern(path_to_map, (self.grid.height, self.grid.width), self.random)
             else:
                 map = generate_map_from_png(path_to_map, (self.grid.height, self.grid.width))
             print(map.shape)
 
-        for (contents, x, y) in self.grid.coord_iter():
+        for (_, x, y) in self.grid.coord_iter():
             if path_to_map == '':
                 cell = Cell((x, y), self.random.getrandbits(5) == 0, self)
             else:
-                if x == 1 and y == 2:
-                    cell = Cell((x, y), True, self)
-                else:
-                    cell = Cell((x, y), map[y, x] == OBS, self)
+                cell = Cell((x, y), map[y, x] == OBS, self)
             self.grid.place_agent(cell, (x, y))
 
-        # robot_pos = [
-        #     (1,6),
-        #     (9,1),
-        #     (30,6),
-        #     (32,23),
-        #     (32,28),
-        #     (5,6),
-        #     (2,6),
-        #     (14,33),
-        #     (49,49),
-        #     (34,20)
-        # ]
         robot_pos = self.gen_coordinates(width, height, robot_count, map)
         i = 0
         for pos in robot_pos:

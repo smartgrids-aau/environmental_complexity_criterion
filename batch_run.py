@@ -1,4 +1,5 @@
 from multiprocessing import freeze_support
+import os
 from mesa.batchrunner import batch_run
 import pandas as pd
 from cpp.planners.greedy import GreedyPlanner
@@ -14,7 +15,7 @@ def get_max_visited_cell(model):
     return max
 
 def get_cells_state(model):
-    visits = [cell[0][0].visitCount for cell in list(model.grid.coord_iter())]
+    visits = [str(cell[0][0].visitCount).zfill(3) for cell in list(model.grid.coord_iter())]
     return visits
         
 
@@ -46,30 +47,8 @@ if __name__ == "__main__":
         BatchCoveragePathPlan,
         br_params,
         iterations=3
-        # model_reporters={"Rich": get_num_rich_agents},
-        # agent_reporters={"Wealth": "wealth"},
     )
     br_df = pd.DataFrame(data)
-    br_df.to_csv("batch_run.csv")
-
-    # The commented out code below is the equivalent code as above, but done
-    # via the legacy BatchRunner class. This is a good example to look at if
-    # you want to migrate your code to use `batch_run()` from `BatchRunner`.
-    """
-    br = BatchRunner(
-        BankReservesModel,
-        br_params,
-        iterations=2,
-        max_steps=1000,
-        nr_processes=None,
-        # model_reporters={"Data Collector": lambda m: m.datacollector},
-    )
-    br.run_all()
-    br_df = br.get_model_vars_dataframe()
-    br_step_data = pd.DataFrame()
-    for i in range(len(br_df["Data Collector"])):
-        if isinstance(br_df["Data Collector"][i], DataCollector):
-            i_run_data = br_df["Data Collector"][i].get_model_vars_dataframe()
-            br_step_data = br_step_data.append(i_run_data, ignore_index=True)
-    br_step_data.to_csv("BankReservesModel_Step_Data.csv")
-    """
+    if not os.path.exists('results'):
+        os.makedirs('results')
+    br_df.to_csv('results/batch_run.csv')

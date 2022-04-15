@@ -37,7 +37,7 @@ class Shape:
             found = self.check_fit_in_map(anchor, map.shape) and not self.check_collision(map, coors)
             failes.add(rand_idx)
             if len(failes) == map.shape[0] * map.shape[1]:
-                raise Exception('No Available Space')
+                raise Exception('Not enough space')
         return coors
 
     def check_fit_in_map(self, anchor, map_shape)->Boolean:
