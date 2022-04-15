@@ -31,6 +31,10 @@ class Cell(Agent):
     def isEmpty(self):
         return (not self.isObstacle) and (len(self.content) == 1)
 
+    @property
+    def model_steps(self):
+        return self.model.schedule.steps
+
     def step(self):
         pass
 

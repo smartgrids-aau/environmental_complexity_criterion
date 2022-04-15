@@ -6,8 +6,6 @@ def portrayCell(agent):
     """
     This function is registered with the visualization server to be called
     each tick to indicate how to draw the cell in its current state.
-    :param cell:  the cell in the simulation
-    :return: the portrayal dictionary.
     """
     assert agent is not None
     if type(agent) is Cell:
@@ -20,7 +18,7 @@ def portrayCell(agent):
             "x": agent.x,
             "y": agent.y,
             "Color": "black" if agent.isObstacle 
-                    else Color(0,117,0).with_alpha(compute_alpha(agent.visitCount)) if agent.isVisited 
+                    else Color(0,117,0).with_alpha(compute_alpha(agent.visitCount)) if agent.isVisited and agent.model_steps > 0
                     else 'white',
             "text": str(agent.visitCount) if not agent.isObstacle else '',
             "text_color": "white"

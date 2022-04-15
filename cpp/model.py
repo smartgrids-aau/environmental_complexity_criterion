@@ -20,6 +20,7 @@ def get_num_empty_cells(model):
 class CoveragePathPlan(Model):
 
     def __init__(self, width=40, height=40, robot_count = 8, path_to_map = '', planner= GreedyPlanner(), seed = None):
+        super().__init__()
 
         self._seed = seed
         self.schedule = BaseScheduler(self)
@@ -41,12 +42,12 @@ class CoveragePathPlan(Model):
             self.grid.place_agent(cell, (x, y))
 
         robot_pos = self.gen_coordinates(width, height, robot_count, map)
-        i = 0
         for pos in robot_pos:
-            robot = Robot(i, pos, self, planner)
+            robot = Robot(self.next_id(), pos, self, planner)
             self.grid.place_agent(robot, pos)
             self.schedule.add(robot)
-            i+=1
+            self.grid[pos][0].incrementVisitCount()
+            robot.first_visits += 1
 
         self.datacollector = DataCollector(
             model_reporters={
@@ -66,7 +67,7 @@ class CoveragePathPlan(Model):
         
         self.running = False
         for (contents, x, y) in self.grid.coord_iter():
-            cell = contents[0] if isinstance(contents[0], Cell) else contents[1]
+            cell = contents[0]
             if not cell.isObstacle and not cell.isVisited:
                 self.running = True
                 break
