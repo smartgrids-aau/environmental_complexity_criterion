@@ -21,8 +21,8 @@ def get_cells_state(model):
 
 class BatchCoveragePathPlan(CoveragePathPlan):
 
-    def __init__(self, width=40, height=40, robot_count = 8, path_to_map = '', planner= GreedyPlanner(), seed = None):
-        super().__init__(width, height, robot_count, path_to_map, planner, seed)
+    def __init__(self, width=40, height=40, robot_count = 8, map = '', planner= GreedyPlanner(), seed = None):
+        super().__init__(width, height, robot_count, map, planner, seed)
 
         self.datacollector = DataCollector(
             model_reporters={
@@ -38,7 +38,7 @@ br_params = {
     "width": 25,
     "height": 25,
     "robot_count": [3,10, 20],
-    "path_to_map": ["cpp\maps\star.png", "{rect 8 4, L 7 2 -8 3, rect 6 6}", "{L 20 3 15 3, rect 4 4, rect 2 9}"],
+    "map": ["cpp\maps\star.png", "{rect 8 4, L 7 2 -8 3, rect 6 6}", "{L 20 3 15 3, rect 4 4, rect 2 9}"],
     'planner': GreedyPlanner(),
 }
 

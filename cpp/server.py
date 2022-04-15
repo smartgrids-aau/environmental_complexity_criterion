@@ -16,7 +16,7 @@ model_params = {
         "slider", "Robots Count", 8, 1, 50
     ),
     # "path_to_map": 'cpp\maps\R.png',
-    "path_to_map": """{
+    "map": """{
         rect 4 5, rect 12 8, rect 10 5 , rect 2 6, L 5 1 12 2, L -5 2 -7 2, L -18 2 -12 4,
         L 4 1 -5 1, L -6 1 6 2, rect 1 1, rect 3 4, rect 2 2, rect 2 2, rect 1 1, rect 2 4
      }""",

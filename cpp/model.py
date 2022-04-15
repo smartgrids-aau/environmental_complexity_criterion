@@ -19,7 +19,7 @@ def get_num_empty_cells(model):
 
 class CoveragePathPlan(Model):
 
-    def __init__(self, width=40, height=40, robot_count = 8, path_to_map = '', planner= GreedyPlanner(), seed = None):
+    def __init__(self, width=40, height=40, robot_count = 8, map = '', planner= GreedyPlanner(), seed = None):
         super().__init__()
 
         self._seed = seed
@@ -27,15 +27,15 @@ class CoveragePathPlan(Model):
         self.grid = MultiGrid(width, height, torus=False)
         self.planner = planner
 
-        if path_to_map!='':
-            if re.match('^{((.|\n)*)}$', path_to_map):
-                map = generate_map_by_pattern(path_to_map, (self.grid.height, self.grid.width), self.random)
+        if map!='':
+            if re.match('^{((.|\n)*)}$', map):
+                map = generate_map_by_pattern(map, (self.grid.height, self.grid.width), self.random)
             else:
-                map = generate_map_from_png(path_to_map, (self.grid.height, self.grid.width))
+                map = generate_map_from_png(map, (self.grid.height, self.grid.width))
             print(map.shape)
 
         for (_, x, y) in self.grid.coord_iter():
-            if path_to_map == '':
+            if map == '':
                 cell = Cell((x, y), self.random.getrandbits(5) == 0, self)
             else:
                 cell = Cell((x, y), map[y, x] == OBS, self)
