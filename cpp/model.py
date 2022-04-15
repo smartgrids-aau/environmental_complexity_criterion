@@ -1,10 +1,11 @@
 from importlib.resources import contents
+import re
 from mesa import Model
 from mesa.time import BaseScheduler
 from mesa.space import MultiGrid
-import numpy as np
-from PIL import Image
 from cpp.cell import Cell
+from cpp.constants import OBS
+from cpp.map import generate_map_by_pattern, generate_map_from_png
 from cpp.planners.greedy import GreedyPlanner
 from cpp.robot import Robot
 from mesa.datacollection import DataCollector
@@ -17,7 +18,6 @@ def get_num_empty_cells(model):
 
 
 class CoveragePathPlan(Model):
-    AREA, OBS = 1 , 0
 
     def __init__(self, width=40, height=40, robot_count = 8, path_to_map = '', planner= GreedyPlanner(), seed = None):
 
@@ -27,14 +27,17 @@ class CoveragePathPlan(Model):
         self.planner = planner
 
         if path_to_map!='':
-            map = self.get_area_map(path_to_map)
+            if re.match('^{(.*)}$', path_to_map):
+                map = generate_map_by_pattern(path_to_map, (self.grid.height, self.grid.width), self.random)
+            else:
+                map = generate_map_from_png(path_to_map, (self.grid.height, self.grid.width))
             print(map.shape)
 
         for (contents, x, y) in self.grid.coord_iter():
             if path_to_map == '':
                 cell = Cell((x, y), self.random.getrandbits(5) == 0, self)
             else:
-                cell = Cell((x, y), map[x,y] == self.OBS, self)
+                cell = Cell((x, y), map[x,y] == OBS, self)
             self.grid.place_agent(cell, (x, y))
 
         # robot_pos = [
@@ -87,20 +90,9 @@ class CoveragePathPlan(Model):
         for _ in range(count):
             x = self.random.randint(0, width-1)
             y = self.random.randint(0, height-1)
-            while (x, y) in seen or map[x,y] == self.OBS:
+            while (x, y) in seen or map[x,y] == OBS:
                 x = self.random.randint(0, width-1)
                 y = self.random.randint(0, height-1)
             seen.add((x, y))
         return seen
             
-
-    def get_area_map(self, path):
-        img = Image.open(path)
-        img = img.rotate(-90)
-        img = img.resize((self.grid.width, self.grid.height), Image.NEAREST)
-        map = np.array(img)
-        non_obs = np.array(map).mean(axis=2) != 0
-        map = np.int8(np.zeros(non_obs.shape))
-        map[non_obs] = self.AREA
-        map[~non_obs] = self.OBS
-        return map

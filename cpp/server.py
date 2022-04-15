@@ -15,7 +15,8 @@ model_params = {
     "robot_count": UserSettableParameter(
         "slider", "Robots Count", 8, 1, 50
     ),
-    "path_to_map": 'cpp\maps\star.png',
+    # "path_to_map": 'cpp\maps\star.png',
+    "path_to_map": '{rect 4 5, rect 2 8, rect 10 5 , rect 2 6, rect 9 9}',
     'planner': GreedyPlanner(),
     'seed': 7
 }
