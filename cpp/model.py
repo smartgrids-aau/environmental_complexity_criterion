@@ -37,7 +37,10 @@ class CoveragePathPlan(Model):
             if path_to_map == '':
                 cell = Cell((x, y), self.random.getrandbits(5) == 0, self)
             else:
-                cell = Cell((x, y), map[x,y] == OBS, self)
+                if x == 1 and y == 2:
+                    cell = Cell((x, y), True, self)
+                else:
+                    cell = Cell((x, y), map[y, x] == OBS, self)
             self.grid.place_agent(cell, (x, y))
 
         # robot_pos = [
@@ -90,7 +93,7 @@ class CoveragePathPlan(Model):
         for _ in range(count):
             x = self.random.randint(0, width-1)
             y = self.random.randint(0, height-1)
-            while (x, y) in seen or map[x,y] == OBS:
+            while (x, y) in seen or map[y, x] == OBS:
                 x = self.random.randint(0, width-1)
                 y = self.random.randint(0, height-1)
             seen.add((x, y))

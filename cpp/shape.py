@@ -1,11 +1,11 @@
 from tabnanny import check
 from typing import List
 from xmlrpc.client import Boolean
-from numpy import ndarray
-
+from numpy import ndarray, sign
 from cpp.constants import OBS
 
-RECT = 'rect'
+SHAPE_RECT = 'rect'
+SHAPE_L = 'L'
 
 class Shape:
 
@@ -16,8 +16,10 @@ class Shape:
     def get_shape(pattern, random):
         parts = pattern.split(' ')
         name = parts[0]
-        if name == RECT:
+        if name == SHAPE_RECT:
             return Rect(int(parts[1]), int(parts[2]), random)
+        elif name == SHAPE_L:
+            return L(int(parts[1]), int(parts[2]), int(parts[3]), int(parts[4]), random)
 
 
     def draw(self, map):
@@ -78,4 +80,36 @@ class Rect(Shape):
             for j in range(anchor[1], anchor[1]+self.width):
                 coors.append((i,j))
         return coors
+
+
+
+class L(Shape):
+
+    def __init__(self, v_length, v_thickness, h_length, h_thickness, random):
+        super().__init__(random)
+        self.v_length = v_length
+        self.v_thickness = v_thickness
+        self.h_length = h_length
+        self.h_thickness = h_thickness
+
+    def check_fit_in_map(self, anchor, map_shape)->Boolean:
+        print('anchor', anchor)
+        return anchor[0] + self.v_length in range(0, map_shape[0]) and anchor[0] + self.h_thickness * self.sign(self.v_length) in range(0, map_shape[0]) and\
+            anchor[1] + self.h_length in range(0, map_shape[1]) and anchor[1] + self.v_thickness * self.sign(self.h_length) in range(0, map_shape[0])
+
+    def get_draw_coors(self, anchor):
+        coors = set()
+        # draw vertical column
+        for i in range(anchor[0], anchor[0] + self.v_length, sign(self.v_length)):
+            for j in range(anchor[1], anchor[1] + self.v_thickness * sign(self.h_length), sign(self.h_length)):
+                coors.add((i,j))
+
+        # draw horizontal row
+        for i in range(anchor[0], anchor[0] + self.h_thickness * sign(self.v_length), sign(self.v_length)):
+            for j in range(anchor[1], anchor[1] + self.h_length, sign(self.h_length)):
+                coors.add((i,j))
+        return list(coors)
+
+    def sign(self, value):
+        return value / abs(value)
     
