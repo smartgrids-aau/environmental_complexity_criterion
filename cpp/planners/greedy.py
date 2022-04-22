@@ -10,64 +10,72 @@ class GreedyPlanner(Planner):
         self.depth = depth
 
     def next_destination(self, robot: Robot) -> Cell:
-        choices = self.get_empty_neighbors(robot.model.grid, robot.pos)
-        next_move = None
-        q = queue.SimpleQueue()
         min_visit_count = 999999
         best_choices = []
-        seen = {robot.pos:-1}
+        next_move = None
 
+        current_cell = robot.model.grid[robot.pos][0]
+        seen = {robot.pos: -current_cell.visitCount - 1}
 
-        for choice in choices:
-            q.put({'path': [], 'current':choice, 'cost':0})
-            seen[choice.pos] = 0
-        
+        # path: path starting after robot position, INCLUDING last_cell
+        # last_cell: last cell in the path
+        # cost: sum of visitCount of all cells in path INCLUDING last_cell
+        q = queue.SimpleQueue()
+        q.put({'path': [], 'last_cell': current_cell, 'cost': 0})
+
         while not q.empty():
-            c = q.get()
-            if c['current'].visitCount < min_visit_count:
-                min_visit_count = c['current'].visitCount
-                best_choices = [c]
-            elif c['current'].visitCount == min_visit_count:
-                best_choices.append(c)
-            if len(c['path']) < self.depth:
-                choices = self.get_nonObstacle_neighbors(robot.model.grid, c['current'].pos)
+            expanding_path = q.get()
+
+            if len(expanding_path['path']) > 0:
+                if expanding_path['last_cell'].visitCount < min_visit_count:
+                    min_visit_count = expanding_path['last_cell'].visitCount
+                    best_choices = [expanding_path]
+                elif expanding_path['last_cell'].visitCount == min_visit_count:
+                    best_choices.append(expanding_path)
+
+            if len(expanding_path['path']) <= self.depth:
+                choices = self.get_available_neighbors(
+                    grid=robot.model.grid,
+                    pos=expanding_path['last_cell'].pos,
+                    ignoreRobots=len(expanding_path['path']) > 0
+                )
                 for choice in choices:
-                    if choice.pos not in seen or c['cost'] + c['current'].visitCount < seen[choice.pos]:
-                        seen[choice.pos] = c['cost'] + c['current'].visitCount
-                        appended_path = c['path'].copy()
-                        appended_path.append(c['current'].pos)
-                        q.put({'path': appended_path, 'current':choice, 'cost':c['cost']+ c['current'].visitCount})
+                    if choice.pos not in seen or\
+                            expanding_path['cost'] + choice.visitCount < seen[choice.pos]:
+                        seen[choice.pos] = expanding_path['cost'] + choice.visitCount
+                        appended_path = expanding_path['path'].copy()
+                        appended_path.append(choice.pos)
+                        q.put({
+                            'path': appended_path,
+                            'last_cell': choice,
+                            'cost': expanding_path['cost'] + choice.visitCount
+                        })
 
         if len(best_choices) > 0:
-            destination = robot.random.choice(best_choices)
-            if len(destination['path']) == 0:
-                next_move = robot.model.grid[destination['current'].pos][0]
-            else:
-                next_move = robot.model.grid[destination['path'][0]][0]
+            best_destination = self.choose_best_path(best_choices, robot.random)
+            next_move = robot.model.grid[best_destination['path'][0]][0]
         return next_move
 
-    def get_empty_neighbors(self, grid, pos):
+    def get_available_neighbors(self, grid, pos, ignoreRobots):
+        can_move_to = lambda cell: not cell.isObstacle if ignoreRobots else cell.isEmpty
         neighborsContent = grid.get_neighbors(pos, moore=False, include_center=False)
         # straight neighbors
-        neighbors = list(filter(lambda content: isinstance(content, Cell) and content.isEmpty, neighborsContent))
+        neighbors = list(filter(lambda content: isinstance(content, Cell) and
+                                can_move_to(content), neighborsContent))
         # diagonal neighbors
         for i in [pos[0]-1, pos[0]+1]:
             for j in [pos[1]-1, pos[1]+1]:
                 if i in range(0, grid.height) and j in range(0, grid.width) and\
-                    grid[i,j][0].isEmpty and grid[i, pos[1]][0].isEmpty and grid[pos[0], j][0].isEmpty:
-                    neighbors.append(grid[i,j][0])
+                        can_move_to(grid[i, j][0]) and\
+                        not grid[i, pos[1]][0].isObstacle and not grid[pos[0], j][0].isObstacle:
+                    neighbors.append(grid[i, j][0])
         return neighbors
 
-    def get_nonObstacle_neighbors(self, grid, pos):
-        neighborsContent = grid.get_neighbors(pos, moore=False, include_center=False)
-        # straight neighbors
-        neighbors = list(filter(lambda content: isinstance(content, Cell) and not content.isObstacle, neighborsContent))
-        # diagonal neighbors
-        for i in [pos[0]-1, pos[0]+1]:
-            for j in [pos[1]-1, pos[1]+1]:
-                if i in range(0, grid.height) and j in range(0, grid.width) and\
-                    not grid[i,j][0].isObstacle and not grid[i, pos[1]][0].isObstacle and not grid[pos[0], j][0].isObstacle:
-                    neighbors.append(grid[i,j][0])
-        return neighbors
-
-
+    def choose_best_path(self, best_choices, random):
+        min_value = min(
+            choice['cost'] - choice['last_cell'].visitCount for choice in best_choices
+        )
+        min_best_choices = [choice for choice in best_choices if choice['cost'] -
+                            choice['last_cell'].visitCount == min_value]
+        destination = random.choice(min_best_choices)
+        return destination
