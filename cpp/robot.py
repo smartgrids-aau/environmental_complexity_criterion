@@ -21,17 +21,15 @@ class Robot(Agent):
     @property
     def empty_neighbor_cells(self):
         neighborsContent = self.model.grid.get_neighbors(self.pos, moore=True, include_center=False)
-        return list(filter(lambda grid: isinstance(grid, Cell) and grid.isEmpty, neighborsContent))
+        return list(filter(lambda content: isinstance(content, Cell) and content.isEmpty, neighborsContent))
 
     def step(self):
-        choices = self.empty_neighbor_cells
-        if len(choices) > 0:
-            destination = self.planner.next_destination(self, choices)
+        destination: Cell = self.planner.next_destination(self)
 
-            if destination != None:
-                self.model.grid.move_agent(self, destination.pos)
-                if not destination.isVisited:
-                    self.first_visits += 1
-                destination.incrementVisitCount()
+        if destination != None:
+            self.model.grid.move_agent(self, destination.pos)
+            if not destination.isVisited:
+                self.first_visits += 1
+            destination.incrementVisitCount()
             
 

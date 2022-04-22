@@ -3,5 +3,5 @@ from cpp.robot import Robot
 
 class Planner:
 
-    def next_destination(robot: Robot, choices: list[Cell]) -> Cell:
+    def next_destination(robot: Robot) -> Cell:
         pass
