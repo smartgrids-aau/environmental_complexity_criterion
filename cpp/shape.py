@@ -48,18 +48,15 @@ class Shape:
 
     def check_collision(self, map, shape_coors):
         for coor in shape_coors:
-            if any(map[neighbor[0],neighbor[1]] == OBS for neighbor in self.get_neightbors(map.shape, coor)):
+            if any(map[neighbor] == OBS for neighbor in self.get_neightbors(map.shape, coor)):
                 return True
         return False
 
     def get_neightbors(self, map_shape, coor):
-        neighbors = [
-            coor,
-            (coor[0] - 1, coor[1]),
-            (coor[0] + 1, coor[1]),
-            (coor[0], coor[1] - 1),
-            (coor[0], coor[1] + 1)
-        ]
+        neighbors = []
+        for i in range(coor[0] - 1, coor[0] + 2):
+            for j in range(coor[1] - 1, coor[1] + 2):
+                neighbors.append((i, j))
         return list(filter(lambda n: n[0] in range(0, map_shape[0]) and n[1] in range(0, map_shape[1]), neighbors))
 
 
