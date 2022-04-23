@@ -1,6 +1,7 @@
 from mesa.visualization.modules import ChartModule
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import UserSettableParameter
+from cpp.planners.Lgreedy import LgreedyPlanner
 from cpp.planners.greedy import GreedyPlanner
 
 from cpp.portrayal import portrayCell
@@ -21,7 +22,8 @@ model_params = {
         rect 4 5, rect 10 5 , rect 2 6, L -5 2 -7 2, L -18 2 -12 2,
         L 4 1 -5 1, L -6 1 6 2, rect 1 1, rect 3 4, rect 2 2, rect 2 2, rect 1 1, rect 2 4
      }""",
-    'planner': GreedyPlanner(7),
+    # 'planner': GreedyPlanner(1),
+    'planner': LgreedyPlanner(1),
     'seed': 7
 }
 

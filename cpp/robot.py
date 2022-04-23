@@ -8,10 +8,9 @@ from cpp.color import Color
 
 
 class Robot(Agent):
-    def __init__(self, id, pos, model, planner, heading=(1,0)):
+    def __init__(self, id, pos, model, planner, heading=(0,1)):
         super().__init__(id, model)
         print(pos)
-        self.x, self.y = pos
         self.first_visits = 0
         self.planner = planner
         self.color = Color.random(self.random)
@@ -28,13 +27,25 @@ class Robot(Agent):
 
     @property
     def angle(self):
-        return -math.degrees(np.arctan2(self.heading[1], self.heading[0]))
+        return -math.degrees(np.arctan2(*self.heading))
+
+    @property
+    def x(self):
+        return self.pos[0]
+
+    @property
+    def y(self):
+        return self.pos[1]
+
+    @property
+    def prev_pos(self):
+        return (self.x - self.heading[0], self.y - self.heading[1])
 
     def step(self):
         destination: Cell = self.planner.next_destination(self)
 
         if destination != None:
-            self.heading = (destination.y - self.pos[1], destination.x - self.pos[0])
+            self.heading = (destination.x - self.x, destination.y - self.y)
             self.model.grid.move_agent(self, destination.pos)
             if not destination.isVisited:
                 self.first_visits += 1
