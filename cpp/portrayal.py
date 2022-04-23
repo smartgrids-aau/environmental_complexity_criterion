@@ -25,8 +25,9 @@ def portrayCell(agent):
         }
     else:
         return {
-            "Shape": "circle",
-            "r": 0.8,
+            "Shape": "arrowHead",
+            "scale": 1,
+            "rotate": agent.angle,
             "Filled": "true",
             "Layer": 1,
             "x": agent.x,
