@@ -1,23 +1,29 @@
 from multiprocessing import freeze_support
 import os
+from random import seed
 from mesa.batchrunner import batch_run
 import pandas as pd
 from cpp.planners.greedy import GreedyPlanner
 from mesa.datacollection import DataCollector
-from cpp.model import CoveragePathPlan
-
+from cpp.model import STOCK_THRESHOLD, CoveragePathPlan
 
 def get_max_visited_cell(model):
     max = 0
-    for (contents, x, y) in model.grid.coord_iter():
-        if contents[0].visitCount > max:
+    for contents in model.grid.__iter__():
+        if not contents[0].isObstacle and contents[0].visitCount > max:
             max = contents[0].visitCount
     return max
 
 def get_cells_state(model):
     visits = [str(cell[0][0].visitCount).zfill(3) for cell in list(model.grid.coord_iter())]
     return visits
-        
+
+def check_final_result(model):
+    for contents in model.grid.__iter__():
+        cell = contents[0]
+        if not cell.isObstacle and not cell.isVisited:
+            return False
+    return True
 
 class BatchCoveragePathPlan(CoveragePathPlan):
 
@@ -27,7 +33,8 @@ class BatchCoveragePathPlan(CoveragePathPlan):
         self.datacollector = DataCollector(
             model_reporters={
                 "Max visited": get_max_visited_cell,
-                "final state": get_cells_state
+                "final state": get_cells_state,
+                "Solved": check_final_result
             },
             # agent_reporters={"first visits": lambda x: {'value': x.first_visits, 'color': x.color}},
             # agent_reporters={"first visits": lambda x: x.first_visits},
@@ -37,9 +44,9 @@ class BatchCoveragePathPlan(CoveragePathPlan):
 br_params = {
     "width": 25,
     "height": 25,
-    "robot_count": [3,10, 20],
+    "robot_count": [3, 10, 20],
     "map": ["cpp\maps\star.png", "{rect 8 4, L 7 2 -8 3, rect 6 6}", "{L 20 3 15 3, rect 4 4, rect 2 9}"],
-    'planner': GreedyPlanner(),
+    'planner': [GreedyPlanner(1), GreedyPlanner(5)],
 }
 
 if __name__ == "__main__":

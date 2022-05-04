@@ -15,7 +15,7 @@ model_params = {
     "robot_count": UserSettableParameter(
         "slider", "Robots Count", 8, 1, 50
     ),
-    # "path_to_map": 'cpp\maps\R.png',
+    # "map": 'cpp\maps\star.png',
     "map": """{
         rect 4 5, rect 10 5 , rect 2 6, L -5 2 -7 2, L -14 2 -12 2,
         L 4 1 -5 1, L -6 1 6 2, rect 1 1, rect 3 4, rect 2 2, rect 2 2, rect 1 1, rect 2 4

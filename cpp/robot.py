@@ -10,7 +10,6 @@ from cpp.color import Color
 class Robot(Agent):
     def __init__(self, id, pos, model, planner, heading=(0,1)):
         super().__init__(id, model)
-        print(pos)
         self.first_visits = 0
         self.planner = planner
         self.color = Color.random(self.random)

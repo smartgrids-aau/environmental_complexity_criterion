@@ -10,10 +10,10 @@ from cpp.planners.greedy import GreedyPlanner
 from cpp.robot import Robot
 from mesa.datacollection import DataCollector
 
+STOCK_THRESHOLD = 100
+
 def get_num_empty_cells(model):
-    all = list(model.grid.__iter__())
     empty_cells = [content[0] for content in model.grid if (not content[0].isVisited and not content[0].isObstacle)]
-    print(len(empty_cells), len(all))
     return len(empty_cells)
 
 
@@ -26,6 +26,8 @@ class CoveragePathPlan(Model):
         self.schedule = BaseScheduler(self)
         self.grid = MultiGrid(width, height, torus=False)
         self.planner = planner
+        self.stock_step_counts = 0
+        self.stock = True
 
         if map!='':
             if re.match('^{((.|\n)*)}$', map):
@@ -61,15 +63,28 @@ class CoveragePathPlan(Model):
 
 
     def step(self):
+        prev_positions = [robot.pos for robot in self.schedule.agents]
+
         self.schedule.step()
         self.datacollector.collect(self)
         
         self.running = False
-        for (contents, x, y) in self.grid.coord_iter():
+        for contents in self.grid.__iter__():
             cell = contents[0]
             if not cell.isObstacle and not cell.isVisited:
                 self.running = True
                 break
+    
+        cur_positions = [robot.pos for robot in self.schedule.agents]
+        if prev_positions == cur_positions:
+            self.stock_step_counts += 1
+            if self.stock_step_counts == STOCK_THRESHOLD:
+                self.stock = True
+                self.running = False
+        else:
+            self.stock_step_counts = 0
+
+        
 
 
     def gen_coordinates(self, width, height, count, map):
