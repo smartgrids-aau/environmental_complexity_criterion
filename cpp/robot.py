@@ -30,6 +30,10 @@ class Robot(Agent):
         return -math.degrees(np.arctan2(*self.heading))
 
     @property
+    def grid(self):
+        return self.model.grid
+
+    @property
     def x(self):
         return self.pos[0]
 
@@ -46,12 +50,24 @@ class Robot(Agent):
 
         if destination != None:
             self.heading = (destination.x - self.x, destination.y - self.y)
-            if not destination.isObstacle:
-                self.model.grid.move_agent(self, destination.pos)
-                if not destination.isVisited:
-                    self.first_visits += 1
-                destination.incrementVisitCount()
+            is_ordinal_move = self.heading[0] * self.heading[1]
+            if is_ordinal_move:
+                can_move_ordinal = self.grid[self.x, destination.y][0].isEmpty or self.grid[destination.x, self.y][0].isEmpty
+
+            if destination.isEmpty:
+                if not is_ordinal_move or can_move_ordinal:
+                    self.model.grid.move_agent(self, destination.pos)
+                    if not destination.isVisited:
+                        self.first_visits += 1
+                    destination.incrementVisitCount()
+                else:
+                    self.mark_cell_as_obstacle(self.grid[self.x, destination.y][0])
+                    self.mark_cell_as_obstacle(self.grid[destination.x, self.y][0])
             else:
-                destination.markAsObstacle()
+                self.mark_cell_as_obstacle(destination)
+    
+    def mark_cell_as_obstacle(self, cell):
+        if cell.isObstacle:
+            cell.markAsObstacle()
             
 
