@@ -1,6 +1,8 @@
 import math
 import numpy as np
 
+MAX_INT = 99999
+
 def unit_vector(vector):
     return vector / np.linalg.norm(vector)
 

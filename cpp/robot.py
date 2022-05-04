@@ -46,9 +46,12 @@ class Robot(Agent):
 
         if destination != None:
             self.heading = (destination.x - self.x, destination.y - self.y)
-            self.model.grid.move_agent(self, destination.pos)
-            if not destination.isVisited:
-                self.first_visits += 1
-            destination.incrementVisitCount()
+            if not destination.isObstacle:
+                self.model.grid.move_agent(self, destination.pos)
+                if not destination.isVisited:
+                    self.first_visits += 1
+                destination.incrementVisitCount()
+            else:
+                destination.markAsObstacle()
             
 

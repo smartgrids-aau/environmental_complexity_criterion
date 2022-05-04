@@ -17,7 +17,7 @@ def portrayCell(agent):
             "Layer": 0,
             "x": agent.x,
             "y": agent.y,
-            "Color": "black" if agent.isObstacle 
+            "Color": ("gray" if agent.visitCount == 0 else "black") if agent.isObstacle 
                     else Color(0,117,0).with_alpha(compute_alpha(agent.visitCount)) if agent.isVisited and agent.model_steps > 0
                     else 'white',
             "text": str(agent.visitCount) if not agent.isObstacle else '',

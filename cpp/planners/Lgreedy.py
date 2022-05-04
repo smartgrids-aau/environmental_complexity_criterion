@@ -1,13 +1,15 @@
-from cpp.planners.greedy import GreedyPlanner
+
+from cpp.planners.map_aware_greedy import MapAwareGreedyPlanner
 from cpp.utils import angle_between
 
-class LgreedyPlanner(GreedyPlanner):
+class LgreedyPlanner(MapAwareGreedyPlanner):
 
     def __init__(self, depth=1):
         super().__init__(depth)
 
     def get_available_neighbors(self, grid, current_pos, prev_pos, ignoreRobots):
         all_moves = super().get_available_neighbors(grid, current_pos, prev_pos, ignoreRobots)
+        # todo also check turn is possible (obstacles)
         possible_moves = [cell for cell in all_moves if self.less_than_90_degree(prev_pos, current_pos, cell)]
         return possible_moves
 

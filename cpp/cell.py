@@ -1,5 +1,7 @@
 from mesa import Agent
 
+from cpp.utils import MAX_INT
+
 
 class Cell(Agent):
     """Represents a single cell in the simulation."""
@@ -40,4 +42,7 @@ class Cell(Agent):
 
     def incrementVisitCount(self):
         self.visitCount += 1
+
+    def markAsObstacle(self):
+        self.visitCount = MAX_INT
                     

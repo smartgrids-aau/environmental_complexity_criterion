@@ -1,9 +1,7 @@
 from mesa.visualization.modules import ChartModule
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import UserSettableParameter
-from cpp.planners.Lgreedy import LgreedyPlanner
 from cpp.planners.greedy import GreedyPlanner
-
 from cpp.portrayal import portrayCell
 from cpp.model import CoveragePathPlan
 from modules.CanvasGridVisualization import CanvasGridWithAngle
@@ -23,7 +21,7 @@ model_params = {
         L 4 1 -5 1, L -6 1 6 2, rect 1 1, rect 3 4, rect 2 2, rect 2 2, rect 1 1, rect 2 4
      }""",
     # 'planner': GreedyPlanner(1),
-    'planner': LgreedyPlanner(1),
+    'planner': GreedyPlanner(depth=5),
     'seed': 7
 }
 
