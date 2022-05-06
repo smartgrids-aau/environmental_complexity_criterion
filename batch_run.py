@@ -27,8 +27,8 @@ def check_final_result(model):
 
 class BatchCoveragePathPlan(CoveragePathPlan):
 
-    def __init__(self, width=40, height=40, robot_count = 8, map = '', planner= GreedyPlanner(), seed = None):
-        super().__init__(width, height, robot_count, map, planner, seed)
+    def __init__(self, width=40, height=40, robot_count = 8, map = '', depth= 1, seed = None):
+        super().__init__(width, height, robot_count, map, depth, seed)
 
         self.datacollector = DataCollector(
             model_reporters={
@@ -46,7 +46,7 @@ br_params = {
     "height": 25,
     "robot_count": [3, 10, 20],
     "map": ["cpp\maps\star.png", "{rect 8 4, L 7 2 -8 3, rect 6 6}", "{L 20 3 15 3, rect 4 4, rect 2 9}"],
-    'planner': [GreedyPlanner(1), GreedyPlanner(5)],
+    'depth': [1, 5, 9],
 }
 
 if __name__ == "__main__":

@@ -19,13 +19,13 @@ def get_num_empty_cells(model):
 
 class CoveragePathPlan(Model):
 
-    def __init__(self, width=40, height=40, robot_count = 8, map = '', planner= GreedyPlanner(), seed = None):
+    def __init__(self, width=40, height=40, robot_count = 8, map = '', depth = 1, seed = None):
         super().__init__()
 
         self._seed = seed
         self.schedule = BaseScheduler(self)
         self.grid = MultiGrid(width, height, torus=False)
-        self.planner = planner
+        self.planner = GreedyPlanner(depth)
         self.stock_step_counts = 0
         self.stock = True
 
@@ -44,7 +44,7 @@ class CoveragePathPlan(Model):
 
         robot_pos = self.gen_coordinates(width, height, robot_count, map)
         for pos in robot_pos:
-            robot = Robot(self.next_id(), pos, self, planner)
+            robot = Robot(self.next_id(), pos, self, self.planner)
             self.grid.place_agent(robot, pos)
             self.schedule.add(robot)
             self.grid[pos][0].incrementVisitCount()
