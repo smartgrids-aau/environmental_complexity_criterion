@@ -24,16 +24,18 @@ class CoveragePathPlan(Model):
 
         self._seed = seed
         self.schedule = BaseScheduler(self)
+        
+        if map!='':
+            if re.match('^{((.|\n)*)}$', map):
+                map = generate_map_by_pattern(map, (height, width), self.random)
+            else:
+                map, width, height = generate_map_from_png(map)
+        self.width, self.height = width, height
         self.grid = MultiGrid(width, height, torus=False)
+
         self.planner = GreedyPlanner(depth)
         self.stock_step_counts = 0
         self.stock = True
-
-        if map!='':
-            if re.match('^{((.|\n)*)}$', map):
-                map = generate_map_by_pattern(map, (self.grid.height, self.grid.width), self.random)
-            else:
-                map = generate_map_from_png(map, (self.grid.height, self.grid.width))
 
         for (_, x, y) in self.grid.coord_iter():
             if map == '':

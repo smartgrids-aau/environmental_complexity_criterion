@@ -5,16 +5,15 @@ import re
 from cpp.constants import AREA, OBS
 from cpp.shape import Shape
 
-def generate_map_from_png(path, shape):
+def generate_map_from_png(path):
     img = Image.open(path)
-    img = img.resize(shape, Image.NEAREST)
     map = np.array(img)
     non_obs = np.array(map).mean(axis=2) != 0
     map = np.int8(np.zeros(non_obs.shape))
     map[non_obs] = AREA
     map[~non_obs] = OBS
     map = np.flip(map, axis=0)
-    return map
+    return map, img.width, img.height
 
 def generate_map_by_pattern(pattern, map_shape, random): 
     attemps = 0

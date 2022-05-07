@@ -1,11 +1,8 @@
-from multiprocessing import freeze_support
 import os
-from random import seed
 from mesa.batchrunner import batch_run
 import pandas as pd
-from cpp.planners.greedy import GreedyPlanner
 from mesa.datacollection import DataCollector
-from cpp.model import STOCK_THRESHOLD, CoveragePathPlan
+from cpp.model import CoveragePathPlan
 
 def get_max_visited_cell(model):
     max = 0
@@ -32,6 +29,8 @@ class BatchCoveragePathPlan(CoveragePathPlan):
 
         self.datacollector = DataCollector(
             model_reporters={
+                "width": "width",
+                "height": "height",
                 "Max visited": get_max_visited_cell,
                 "final state": get_cells_state,
                 "Solved": check_final_result
@@ -39,12 +38,13 @@ class BatchCoveragePathPlan(CoveragePathPlan):
             # agent_reporters={"first visits": lambda x: {'value': x.first_visits, 'color': x.color}},
             # agent_reporters={"first visits": lambda x: x.first_visits},
         )
+    
 
 # parameter lists for each parameter to be tested in batch run
 br_params = {
-    "width": 25,
-    "height": 25,
-    "robot_count": [3, 10, 20],
+    # "width": 25,
+    # "height": 25,
+    "robot_count": [3, 20],
     "map": ["cpp\maps\star.png", "{rect 8 4, L 7 2 -8 3, rect 6 6}", "{L 20 3 15 3, rect 4 4, rect 2 9}"],
     'depth': [1, 5, 9],
 }
@@ -53,7 +53,8 @@ if __name__ == "__main__":
     data = batch_run(
         BatchCoveragePathPlan,
         br_params,
-        iterations=2
+        iterations=2,
+        max_steps=3000
     )
     br_df = pd.DataFrame(data)
     if not os.path.exists('results'):

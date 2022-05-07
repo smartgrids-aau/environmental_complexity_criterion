@@ -25,6 +25,7 @@ model_params = {
     2. thickness of vertical bar
     3. Lenght of the horizontal bar of L. if a negative number is given, L shape will be flipped horizontally
     4. thickness of horizontal bar
+NOTE: models using maps from image file ignore width and height parameters and use image size instead. 
 
 ## Batch run
 To run the model with different parameter sets, run `batch_run.py`. The result will be stored in `results/batch_run.csv`.
