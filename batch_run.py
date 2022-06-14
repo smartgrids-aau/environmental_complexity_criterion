@@ -40,7 +40,7 @@ class BatchCoveragePathPlan(CoveragePathPlan):
             # agent_reporters={"first visits": lambda x: x.first_visits},
         )
     
-maps = list(glob.glob(os.path.dirname(os.path.realpath(__file__)) + '\\cpp\\maps\\Ex\\maps\\s\\medium2.png'))
+maps = list(glob.glob(os.path.dirname(os.path.realpath(__file__)) + '\\cpp\\maps\\Ex\\maps\\s\\*.png'))
 print(len(maps),'maps')
 # parameter lists for each parameter to be tested in batch run
 br_params = {
