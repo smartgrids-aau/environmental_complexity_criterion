@@ -3,7 +3,9 @@ from mesa.batchrunner import batch_run
 import pandas as pd
 from mesa.datacollection import DataCollector
 from cpp.model import CoveragePathPlan
-
+import os
+import glob
+import numpy as np
 def get_max_visited_cell(model):
     max = 0
     for contents in model.grid.__iter__():
@@ -21,7 +23,8 @@ def check_final_result(model):
         if not cell.isObstacle and not cell.isVisited:
             return False
     return True
-
+def get_wvisits(model):
+    return np.sum([robot.wvisits for robot in model.schedule.agents])
 class BatchCoveragePathPlan(CoveragePathPlan):
 
     def __init__(self, width=40, height=40, robot_count = 8, map = '', depth= 1, seed = None):
@@ -29,34 +32,34 @@ class BatchCoveragePathPlan(CoveragePathPlan):
 
         self.datacollector = DataCollector(
             model_reporters={
-                "width": "width",
-                "height": "height",
                 "Max visited": get_max_visited_cell,
-                "final state": get_cells_state,
-                "Solved": check_final_result
+                "Solved": check_final_result,
+                "wstep": get_wvisits
             },
             # agent_reporters={"first visits": lambda x: {'value': x.first_visits, 'color': x.color}},
             # agent_reporters={"first visits": lambda x: x.first_visits},
         )
     
-
+maps = list(glob.glob(os.path.dirname(os.path.realpath(__file__)) + '\\cpp\\maps\\Ex\\maps\\s\\medium2.png'))
+print(len(maps),'maps')
 # parameter lists for each parameter to be tested in batch run
 br_params = {
     # "width": 25,
     # "height": 25,
-    "robot_count": [3, 20],
-    "map": ["cpp\maps\star.png", "{rect 8 4, L 7 2 -8 3, rect 6 6}", "{L 20 3 15 3, rect 4 4, rect 2 9}"],
-    'depth': [1, 5, 9],
+    "robot_count": [10],
+    "map": maps,
+    'depth': [15],
 }
 
 if __name__ == "__main__":
     data = batch_run(
         BatchCoveragePathPlan,
         br_params,
-        iterations=2,
-        max_steps=3000
+        iterations=10000,
+        max_steps=10000,
+        number_processes= None
     )
     br_df = pd.DataFrame(data)
-    if not os.path.exists('results'):
-        os.makedirs('results')
-    br_df.to_csv('results/batch_run.csv')
+    if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + "\\results"):
+        os.makedirs(os.path.dirname(os.path.realpath(__file__)) + '\\results')
+    br_df.to_csv(os.path.dirname(os.path.realpath(__file__)) + '\\results\\batch__dist.csv')

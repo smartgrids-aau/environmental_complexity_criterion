@@ -7,9 +7,11 @@ from cpp.model import CoveragePathPlan
 from modules.CanvasGridVisualization import CanvasGridWithAngle
 from modules.ColorfullBarChartVisualization import ColorfullBarChartModule
 from PIL import Image
+import os
+import glob
 
-width, height = 25, 25
-path_to_map = 'cpp\maps\star.png'
+width, height = 40, 40
+path_to_map = os.path.dirname(os.path.realpath(__file__)) + '\\maps\\Ex\\2x\\wide2.png'
 if path_to_map is not None:
     img = Image.open(path_to_map)
     width, height = img.size
@@ -27,7 +29,7 @@ model_params = {
     #     L 4 1 -5 1, L -6 1 6 2, rect 1 1, rect 3 4, rect 2 2, rect 2 2, rect 1 1, rect 2 4
     #  }""",
     'depth': UserSettableParameter(
-        "number", "Greedy planner depth", 3
+        "number", "Greedy planner depth", 1
     ),
     'seed': 7
 }

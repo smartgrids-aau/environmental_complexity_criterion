@@ -1,0 +1,16 @@
+medium1,0.67584,ground_50_50
+simple2_2x,0.535,ground_80_80
+simple2,0.535,ground_40_40
+simple1,0.569375,ground_40_40
+complex2,0.6689270588235294,ground_50_50
+wide1_2x,0.579375,ground_80_160
+wide1,0.579375,ground_40_80
+medium2,0.75776,ground_50_50
+simple1_2x,0.569375,ground_80_80
+medium2_2x,0.75776,ground_100_100
+complex1_2x,0.5454399999999999,ground_100_100
+medium1_2x,0.67584,ground_100_100
+wide2_2x,0.468125,ground_80_160
+complex2_2x,0.6689270588235294,ground_100_100
+complex1,0.5454399999999999,ground_50_50
+wide2,0.468125,ground_40_80

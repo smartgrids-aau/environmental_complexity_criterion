@@ -22,6 +22,9 @@ class Cell(Agent):
         return self.visitCount > 0
 
     @property
+    def nVisits(self):
+        return self.visitCount
+    @property
     def neighbors(self):
         return self.model.grid.neighbor_iter((self.x, self.y))
 

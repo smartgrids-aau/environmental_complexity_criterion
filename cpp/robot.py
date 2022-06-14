@@ -14,6 +14,7 @@ class Robot(Agent):
         self.planner = planner
         self.color = Color.random(self.random)
         self.heading = heading
+        self.wvisits = 0
 
     @property
     def cell(self):
@@ -59,6 +60,7 @@ class Robot(Agent):
                     if not destination.isVisited:
                         self.first_visits += 1
                     destination.incrementVisitCount()
+                    self.wvisits = self.wvisits + 1/destination.nVisits
                 else:
                     self.mark_cell_as_obstacle(self.grid[self.x, destination.y][0])
                     self.mark_cell_as_obstacle(self.grid[destination.x, self.y][0])

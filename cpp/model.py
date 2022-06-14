@@ -21,7 +21,6 @@ class CoveragePathPlan(Model):
 
     def __init__(self, width=40, height=40, robot_count = 8, map = '', depth = 1, seed = None):
         super().__init__()
-
         self._seed = seed
         self.schedule = BaseScheduler(self)
         
@@ -85,7 +84,6 @@ class CoveragePathPlan(Model):
                 self.running = False
         else:
             self.stock_step_counts = 0
-
         
 
 
