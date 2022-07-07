@@ -12,14 +12,15 @@ import glob
 
 width, height = 40, 40
 path_to_map = os.path.dirname(os.path.realpath(__file__)) + '\\maps\\Ex\\2x\\wide2.png'
-if path_to_map is not None:
+# path_to_map = ''
+if path_to_map:
     img = Image.open(path_to_map)
     width, height = img.size
 
 
 model_params = {
-    "width": None,
-    "height": None,
+    "width": width,
+    "height": height,
     "robot_count": UserSettableParameter(
         "slider", "Robots Count", 8, 1, 50
     ),
@@ -31,7 +32,9 @@ model_params = {
     'depth': UserSettableParameter(
         "number", "Greedy planner depth", 1
     ),
-    'seed': 7
+    'position_seed': 7,
+    'model_seed': 9,
+    'map_seed': 11
 }
 
 canvas_element = CanvasGridWithAngle(portrayCell, width, height, 500*width/height, 500)
