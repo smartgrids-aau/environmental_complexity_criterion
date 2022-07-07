@@ -1,7 +1,7 @@
 import os
-from mesa.batchrunner import batch_run
 import pandas as pd
 from mesa.datacollection import DataCollector
+from cpp.batchrunner_custom import batch_run
 from cpp.model import CoveragePathPlan
 import os
 import glob
@@ -41,25 +41,25 @@ class BatchCoveragePathPlan(CoveragePathPlan):
         )
     
 maps = list(glob.glob(os.path.dirname(os.path.realpath(__file__)) + '\\cpp\\maps\\Ex\\maps\\s\\*.png'))
-print(len(maps),'maps')
+# print(len(maps),'maps')
 # parameter lists for each parameter to be tested in batch run
-br_params = {
+br_params = [{
     # "width": 25,
     # "height": 25,
-    "robot_count": [10],
-    "map": maps,
-    'depth': [15],
-}
+    "robot_count": 10,
+    "map": os.getcwd() + '\\cpp\\maps\\Ex\\2x\\wide2.png',
+    'depth': 15,
+}]
 
 if __name__ == "__main__":
     data = batch_run(
         BatchCoveragePathPlan,
         br_params,
-        iterations=10000,
         max_steps=10000,
-        number_processes= None
+        number_processes= None,
+        display_progress=True
     )
     br_df = pd.DataFrame(data)
-    if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + "\\results"):
-        os.makedirs(os.path.dirname(os.path.realpath(__file__)) + '\\results')
-    br_df.to_csv(os.path.dirname(os.path.realpath(__file__)) + '\\results\\batch__dist.csv')
+    if not os.path.exists(os.getcwd() + "\\results"):
+        os.makedirs(os.getcwd() + '\\results')
+    br_df.to_csv(os.getcwd() + '\\results\\batch__dist.csv')

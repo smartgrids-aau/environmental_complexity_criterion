@@ -24,7 +24,7 @@ class CoveragePathPlan(Model):
         self._seed = seed
         self.schedule = BaseScheduler(self)
         
-        if map!='':
+        if map:
             if re.match('^{((.|\n)*)}$', map):
                 map = generate_map_by_pattern(map, (height, width), self.random)
             else:
@@ -37,7 +37,7 @@ class CoveragePathPlan(Model):
         self.stock = True
 
         for (_, x, y) in self.grid.coord_iter():
-            if map == '':
+            if isinstance(map, str) and not map:
                 cell = Cell((x, y), self.random.getrandbits(5) == 0, self)
             else:
                 cell = Cell((x, y), map[y, x] == OBS, self)
