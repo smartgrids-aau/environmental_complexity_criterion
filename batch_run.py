@@ -35,8 +35,8 @@ def merge(groupby_df):
         {
         "steps" : [o['Step']],
         "steps_of":[of['Step']],
-        "A_o/A_of":[str(o['area']) +' '+ str(of['area']) + ' ' + str(float(o['area'])/of['area'])],
-        "Complexity":[(float(of['Step']) / of['area']) / (float(o['Step']) / o['area']) ]
+        "A_o/A_of":[float(o['area'])/of['area']],
+        "Complexity":[1 - ((float(of['Step']) / of['area']) / (float(o['Step']) / o['area'])) ]
         }
     )
     df.set_index('steps', inplace=True) # just to remove index column
@@ -58,7 +58,7 @@ class BatchCoveragePathPlan(CoveragePathPlan):
             # agent_reporters={"first visits": lambda x: x.first_visits},
         )
     
-maps = list(glob.glob(os.path.dirname(os.path.realpath(__file__)) + '\\cpp\\maps\\Ex\\maps\\s\\*.png'))
+maps = list(glob.glob(os.path.dirname(os.path.realpath(__file__)) + '\\cpp\\maps\\EX\\maps\\*.png'))
 
 # parameter lists for each parameter to be tested in batch run
 br_params = {
@@ -77,12 +77,12 @@ if __name__ == "__main__":
         BatchCoveragePathPlan,
         br_params,
         max_steps=10000,
-        iterations=2,
+        iterations=4,
         display_progress=True
     )
     br_df = pd.DataFrame(data)
     br_df = br_df.groupby(['robot_count','map','depth', 'iteration']).apply(merge) 
 
-    if not os.path.exists(os.getcwd() + "\\results"):
-        os.makedirs(os.getcwd() + '\\results')
-    br_df.to_csv(os.getcwd() + '\\results\\batch__dist.csv')
+    if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + "\\results"):
+        os.makedirs(os.path.dirname(os.path.realpath(__file__)) + '\\results')
+    br_df.to_csv(os.path.dirname(os.path.realpath(__file__)) + '\\results\\batch__dist.csv')
