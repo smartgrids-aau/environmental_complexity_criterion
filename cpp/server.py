@@ -11,7 +11,7 @@ import os
 import glob
 
 width, height = 40, 40
-path_to_map = os.path.dirname(os.path.realpath(__file__)) + '\\maps\\Ex\\2x\\wide2.png'
+path_to_map = os.path.dirname(os.path.realpath(__file__)) + '\\maps\\Ex\\maps\\s\\complex1.png'
 # path_to_map = ''
 if path_to_map:
     img = Image.open(path_to_map)

@@ -6,6 +6,8 @@ from cpp.model import CoveragePathPlan
 import os
 import glob
 import numpy as np
+from itertools import groupby
+
 def get_max_visited_cell(model):
     max = 0
     for contents in model.grid.__iter__():
@@ -25,6 +27,21 @@ def check_final_result(model):
     return True
 def get_wvisits(model):
     return np.sum([robot.wvisits for robot in model.schedule.agents])
+
+def merge(groupby_df):
+    o = groupby_df.loc[groupby_df['obstacle_free'] == False].iloc[0]
+    of = groupby_df.loc[groupby_df['obstacle_free'] == True].iloc[0]
+    df = pd.DataFrame(
+        {
+        "steps" : [o['Step']],
+        "steps_of":[of['Step']],
+        "A_o/A_of":[str(o['area']) +' '+ str(of['area']) + ' ' + str(float(o['area'])/of['area'])],
+        "Complexity":[(float(of['Step']) / of['area']) / (float(o['Step']) / o['area']) ]
+        }
+    )
+    df.set_index('steps', inplace=True) # just to remove index column
+    return df
+
 class BatchCoveragePathPlan(CoveragePathPlan):
 
     def __init__(self, width=40, height=40, robot_count = 8, map = '', obstacle_free = False, depth= 1, position_seed = None, model_seed = None, map_seed = None):
@@ -34,7 +51,8 @@ class BatchCoveragePathPlan(CoveragePathPlan):
             model_reporters={
                 "Max visited": get_max_visited_cell,
                 "Solved": check_final_result,
-                "wstep": get_wvisits
+                "wstep": get_wvisits,
+                "area": 'area'
             },
             # agent_reporters={"first visits": lambda x: {'value': x.first_visits, 'color': x.color}},
             # agent_reporters={"first visits": lambda x: x.first_visits},
@@ -47,6 +65,7 @@ br_params = {
     # "width": 25,
     # "height": 25,
     "robot_count": 10,
+    # "map": [os.path.dirname(os.path.realpath(__file__)) + '\\cpp\\maps\\Ex\\maps\\s\\simple1.png'],
     "map": maps,
     'depth': 15,
 }
@@ -62,6 +81,9 @@ if __name__ == "__main__":
         display_progress=True
     )
     br_df = pd.DataFrame(data)
+    br_df.to_csv(os.getcwd() + '\\results\\batch__dist.csv')
+    br_df = br_df.groupby(['robot_count','map','depth', 'iteration']).apply(merge) 
+
     if not os.path.exists(os.getcwd() + "\\results"):
         os.makedirs(os.getcwd() + '\\results')
-    br_df.to_csv(os.getcwd() + '\\results\\batch__dist.csv')
+    br_df.to_csv(os.getcwd() + '\\results\\batch__dist2.csv')

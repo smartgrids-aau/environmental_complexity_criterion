@@ -4,7 +4,6 @@ from typing import (
     Counter,
     Dict,
     List,
-    Optional,
     Tuple,
     Type,
     Mapping,

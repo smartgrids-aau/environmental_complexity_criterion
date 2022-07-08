@@ -6,7 +6,7 @@ from mesa.time import BaseScheduler
 from mesa.space import MultiGrid
 import numpy as np
 from cpp.cell import Cell
-from cpp.constants import OBS
+from cpp.constants import AREA, OBS
 from cpp.map import generate_map_by_pattern, generate_map_from_png
 from cpp.planners.greedy import GreedyPlanner
 from cpp.robot import Robot
@@ -64,17 +64,16 @@ class CoveragePathPlan(Model):
         self.schedule = BaseScheduler(self)
         
         assert map
-        if not obstacle_free:
-            if re.match('^{((.|\n)*)}$', map): # map is pattern-based
-                if obstacle_free:
-                    map = np.ones((height, width), np.int8)
-                else:
-                    map_random = np.random.default_rng(map_seed)
-                    map = generate_map_by_pattern(map, (height, width), map_random)
-            else: # map is path to png file
-                map, width, height = generate_map_from_png(map, obstacle_free)
-        else:
-            map = np.ones((height, width), np.int8)
+        if re.match('^{((.|\n)*)}$', map): # map is pattern-based
+            if obstacle_free:
+                map = np.ones((height, width), np.int8)
+            else:
+                map_random = np.random.default_rng(map_seed)
+                map = generate_map_by_pattern(map, (height, width), map_random)
+        else: # map is path to png file
+            map, width, height = generate_map_from_png(map, obstacle_free)
+
+        self.area = np.count_nonzero(map)
 
         self.width, self.height = width, height
         self.grid = MultiGrid(width, height, torus=False)
