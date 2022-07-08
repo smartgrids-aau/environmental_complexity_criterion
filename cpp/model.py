@@ -60,7 +60,7 @@ class CoveragePathPlan(Model):
         position_seed = None, model_seed = None, map_seed = None
     ):
         super().__init__()
-        self._seed = model_seed
+        self.reset_randomizer(model_seed)
         self.schedule = BaseScheduler(self)
         
         assert map
@@ -69,7 +69,7 @@ class CoveragePathPlan(Model):
                 if obstacle_free:
                     map = np.ones((height, width), np.int8)
                 else:
-                    map_random = random.Random(map_seed)
+                    map_random = np.random.default_rng(map_seed)
                     map = generate_map_by_pattern(map, (height, width), map_random)
             else: # map is path to png file
                 map, width, height = generate_map_from_png(map, obstacle_free)
@@ -87,7 +87,7 @@ class CoveragePathPlan(Model):
             cell = Cell((x, y), map[y, x] == OBS, self)
             self.grid.place_agent(cell, (x, y))
 
-        position_random = random.Random(position_seed)
+        position_random = np.random.default_rng(position_seed)
         robot_pos = self.gen_coordinates(width, height, robot_count, map, position_random)
         for pos in robot_pos:
             robot = Robot(self.next_id(), pos, self, self.planner)
@@ -132,15 +132,19 @@ class CoveragePathPlan(Model):
         
 
 
-    def gen_coordinates(self, width, height, count, map, random):
+    def gen_coordinates(self, width, height, count, map, rng):
         seen = set()
 
         for _ in range(count):
-            x = random.randint(0, width-1)
-            y = random.randint(0, height-1)
+            x = int(rng.integers(0, width-1,))
+            y = int(rng.integers(0, height-1))
             while (x, y) in seen or map[y, x] == OBS:
-                x = random.randint(0, width-1)
-                y = random.randint(0, height-1)
+                x = int(rng.integers(0, width-1))
+                y = int(rng.integers(0, height-1))
             seen.add((x, y))
         return seen
+
+    def reset_randomizer(self, seed) -> None:
+        self.random = np.random.default_rng(seed)
+        self._seed = seed
             

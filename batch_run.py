@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from mesa.datacollection import DataCollector
-from cpp.batchrunner_custom import batch_run
+from cpp.batchrunner import batch_run_with_rngs
 from cpp.model import CoveragePathPlan
 import os
 import glob
@@ -41,23 +41,24 @@ class BatchCoveragePathPlan(CoveragePathPlan):
         )
     
 maps = list(glob.glob(os.path.dirname(os.path.realpath(__file__)) + '\\cpp\\maps\\Ex\\maps\\s\\*.png'))
-# print(len(maps),'maps')
+
 # parameter lists for each parameter to be tested in batch run
 br_params = {
     # "width": 25,
     # "height": 25,
     "robot_count": 10,
-    "map": [os.getcwd() + '\\cpp\\maps\\Ex\\2x\\wide2.png'],
+    "map": maps,
     'depth': 15,
 }
 
-if __name__ == "__main__":
-    data = batch_run(
+if __name__ == "__main__":  
+    print(len(maps),'maps')
+    # note that each parameter set is executed (2 * iterations) times. The second is obstacle free.
+    data = batch_run_with_rngs(
         BatchCoveragePathPlan,
         br_params,
         max_steps=10000,
         iterations=2,
-        number_processes= None,
         display_progress=True
     )
     br_df = pd.DataFrame(data)

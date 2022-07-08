@@ -18,8 +18,8 @@ class Color():
         ).hex_format()
 
     @staticmethod
-    def random(random: Random):
-        return "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+    def random(random):
+        return "#"+''.join([random.choice([char for char in '0123456789ABCDEF']) for j in range(6)])
 
 
 def compute_alpha(value, min_alpha = 0.3, step_count = 5):

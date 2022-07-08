@@ -19,10 +19,9 @@ from multiprocessing import Pool
 import numpy as np
 from tqdm import tqdm
 
-def batch_run(
+def batch_run_with_rngs(
     model_cls: Type[Model],
     parameters: Mapping[str, Union[Any, Iterable[Any]]],
-    number_processes: Optional[int] = None,
     iterations: int = 1,
     data_collection_period: int = -1,
     max_steps: int = 1000,
@@ -51,38 +50,26 @@ def batch_run(
         data_collection_period=data_collection_period,
     )
 
-    total_iterations = len(kwargs_list) * iterations
+    total_iterations = len(kwargs_list)
     run_counter = count()
 
     results: List[Dict[str, Any]] = []
 
     with tqdm(total_iterations, disable=not display_progress) as pbar:
-        if number_processes == 1:
-            for iteration in range(iterations):
-                for kwargs in kwargs_list:
-                    _, rawdata = process_func(kwargs)
-                    run_id = next(run_counter)
-                    data = []
-                    for run_data in rawdata:
-                        out = {"RunId": run_id, "iteration": iteration - 1}
-                        out.update(run_data)
-                        data.append(out)
-                    results.extend(data)
-                    pbar.update()
-
-        else:
-            iteration_counter: Counter[Tuple[Any, ...]] = Counter()
-            with Pool(number_processes) as p:
-                for paramValues, rawdata in p.imap_unordered(process_func, kwargs_list):
-                    iteration_counter[paramValues[0:4]] += 1
-                    iteration = iteration_counter[paramValues[0:4]]
-                    run_id = next(run_counter)
-                    data = []
-                    for run_data in rawdata:
-                        out = {"RunId": run_id, "iteration": iteration - 1}
-                        out.update(run_data)
-                        data.append(out)
-                    results.extend(data)
-                    pbar.update()
+        iteration_counter: Counter[Tuple[Any, ...]] = Counter()
+        with Pool(None) as p:
+            for paramValues, rawdata in p.imap_unordered(process_func, kwargs_list):
+                iteration_counter[paramValues[0:4]] += 1
+                iteration = iteration_counter[paramValues[0:4]]
+                run_id = next(run_counter)
+                data = []
+                for run_data in rawdata:
+                    out = {"RunId": run_id, "iteration": iteration - 1}
+                    out.update(run_data)
+                    del out['position_seed']
+                    del out['model_seed']
+                    data.append(out)
+                results.extend(data)
+                pbar.update()
 
     return results
