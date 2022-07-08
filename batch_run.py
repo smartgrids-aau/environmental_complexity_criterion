@@ -27,8 +27,8 @@ def get_wvisits(model):
     return np.sum([robot.wvisits for robot in model.schedule.agents])
 class BatchCoveragePathPlan(CoveragePathPlan):
 
-    def __init__(self, width=40, height=40, robot_count = 8, map = '', depth= 1, seed = None):
-        super().__init__(width, height, robot_count, map, depth, seed)
+    def __init__(self, width=40, height=40, robot_count = 8, map = '', obstacle_free = False, depth= 1, position_seed = None, model_seed = None, map_seed = None):
+        super().__init__(width, height, robot_count, map, obstacle_free, depth, position_seed, model_seed, map_seed)
 
         self.datacollector = DataCollector(
             model_reporters={
@@ -43,19 +43,20 @@ class BatchCoveragePathPlan(CoveragePathPlan):
 maps = list(glob.glob(os.path.dirname(os.path.realpath(__file__)) + '\\cpp\\maps\\Ex\\maps\\s\\*.png'))
 # print(len(maps),'maps')
 # parameter lists for each parameter to be tested in batch run
-br_params = [{
+br_params = {
     # "width": 25,
     # "height": 25,
     "robot_count": 10,
-    "map": os.getcwd() + '\\cpp\\maps\\Ex\\2x\\wide2.png',
+    "map": [os.getcwd() + '\\cpp\\maps\\Ex\\2x\\wide2.png'],
     'depth': 15,
-}]
+}
 
 if __name__ == "__main__":
     data = batch_run(
         BatchCoveragePathPlan,
         br_params,
         max_steps=10000,
+        iterations=2,
         number_processes= None,
         display_progress=True
     )

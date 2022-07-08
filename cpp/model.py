@@ -55,6 +55,7 @@ class CoveragePathPlan(Model):
         width=40, height=40,
         robot_count = 8,
         map = '',
+        obstacle_free = False,
         depth = 1,
         position_seed = None, model_seed = None, map_seed = None
     ):
@@ -62,15 +63,17 @@ class CoveragePathPlan(Model):
         self._seed = model_seed
         self.schedule = BaseScheduler(self)
         
-        map_is_empty = False
-        if map:
+        assert map
+        if not obstacle_free:
             if re.match('^{((.|\n)*)}$', map): # map is pattern-based
-                map_random = random.Random(map_seed)
-                map = generate_map_by_pattern(map, (height, width), map_random)
+                if obstacle_free:
+                    map = np.ones((height, width), np.int8)
+                else:
+                    map_random = random.Random(map_seed)
+                    map = generate_map_by_pattern(map, (height, width), map_random)
             else: # map is path to png file
-                map, width, height = generate_map_from_png(map)
+                map, width, height = generate_map_from_png(map, obstacle_free)
         else:
-            map_is_empty = True
             map = np.ones((height, width), np.int8)
 
         self.width, self.height = width, height
@@ -81,11 +84,7 @@ class CoveragePathPlan(Model):
         self.stock = True
 
         for (_, x, y) in self.grid.coord_iter():
-            if map_is_empty:
-                # cell = Cell((x, y), map_random.getrandbits(5) == 0, self) 
-                cell = Cell((x, y), False, self)
-            else:
-                cell = Cell((x, y), map[y, x] == OBS, self)
+            cell = Cell((x, y), map[y, x] == OBS, self)
             self.grid.place_agent(cell, (x, y))
 
         position_random = random.Random(position_seed)

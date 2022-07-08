@@ -5,8 +5,11 @@ import re
 from cpp.constants import AREA, OBS
 from cpp.shape import Shape
 
-def generate_map_from_png(path):
+def generate_map_from_png(path, only_ground):
     img = Image.open(path)
+    if only_ground:
+        map = np.ones((img.height, img.width), np.int8)
+        return map, img.width, img.height
     map = np.array(img)
     non_obs = np.array(map).mean(axis=2) != 0
     map = np.int8(np.zeros(non_obs.shape))
