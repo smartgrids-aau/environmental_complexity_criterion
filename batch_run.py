@@ -81,9 +81,8 @@ if __name__ == "__main__":
         display_progress=True
     )
     br_df = pd.DataFrame(data)
-    br_df.to_csv(os.getcwd() + '\\results\\batch__dist.csv')
     br_df = br_df.groupby(['robot_count','map','depth', 'iteration']).apply(merge) 
 
     if not os.path.exists(os.getcwd() + "\\results"):
         os.makedirs(os.getcwd() + '\\results')
-    br_df.to_csv(os.getcwd() + '\\results\\batch__dist2.csv')
+    br_df.to_csv(os.getcwd() + '\\results\\batch__dist.csv')

@@ -65,15 +65,10 @@ class CoveragePathPlan(Model):
         
         assert map
         if re.match('^{((.|\n)*)}$', map): # map is pattern-based
-            if obstacle_free:
-                map = np.ones((height, width), np.int8)
-            else:
-                map_random = np.random.default_rng(map_seed)
-                map = generate_map_by_pattern(map, (height, width), map_random)
+            map_random = np.random.default_rng(map_seed)
+            map = generate_map_by_pattern(map, (height, width), map_random)
         else: # map is path to png file
-            map, width, height = generate_map_from_png(map, obstacle_free)
-
-        self.area = np.count_nonzero(map)
+            map, width, height = generate_map_from_png(map)
 
         self.width, self.height = width, height
         self.grid = MultiGrid(width, height, torus=False)
@@ -83,7 +78,7 @@ class CoveragePathPlan(Model):
         self.stock = True
 
         for (_, x, y) in self.grid.coord_iter():
-            cell = Cell((x, y), map[y, x] == OBS, self)
+            cell = Cell((x, y), map[y, x] == OBS and not obstacle_free, self)
             self.grid.place_agent(cell, (x, y))
 
         position_random = np.random.default_rng(position_seed)
@@ -94,6 +89,11 @@ class CoveragePathPlan(Model):
             self.schedule.add(robot)
             self.grid[pos][0].incrementVisitCount()
             robot.first_visits += 1
+
+        if obstacle_free:
+            self.area = width * height
+        else:
+            self.area = np.count_nonzero(map)
 
         self.datacollector = DataCollector(
             model_reporters={
