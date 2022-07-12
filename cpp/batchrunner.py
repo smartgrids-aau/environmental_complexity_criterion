@@ -67,6 +67,7 @@ def batch_run_with_rngs(
                     out.update(run_data)
                     del out['position_seed']
                     del out['model_seed']
+                    out['map'] = out['map'].split('\\')[-1]
                     data.append(out)
                 results.extend(data)
                 pbar.update()
