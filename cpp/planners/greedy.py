@@ -23,18 +23,18 @@ class GreedyPlanner(Planner):
         for i in range(len(neighbors)):
             destination = neighbors[i]
             direction = np.subtract(destination.pos, robot.pos)
-            d = 1
+            distance = 1
             total_cost = 0
             min_cost = 99999
-            while d <= self.depth:
+            while distance <= self.depth:
                 total_cost += destination.visitCount
-                cost = total_cost / d
+                cost = total_cost / distance
                 if cost < min_cost:
                     min_cost = cost
                 next_destination_pos = np.add(destination.pos, direction)
                 if next_destination_pos[0] in range(0,grid.width) and next_destination_pos[1] in range(0,grid.height):
                     destination = grid[next_destination_pos][0]
-                    d += 1
+                    distance += 1
                 else:
                     break
     

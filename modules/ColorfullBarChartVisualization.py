@@ -17,7 +17,7 @@ class ColorfullBarChartModule(VisualizationElement):
         scope: whether to visualize agent-level or model-level fields
         fields: A List of Dictionaries containing information about each field to be charted,
                 including the name of the datacollector field.
-                Ex: [{"Label":"<your field name>"}]
+                Ex: [{"Label":"<your field name>", "Color":"<your desired color in hex>"}]
         sorting: Whether to sort ascending, descending, or neither when charting agent fields
         sort_by: The agent field to sort by
         canvas_height, canvas_width: The width and height to draw the chart on the page, in pixels.

@@ -11,7 +11,7 @@ import os
 import glob
 
 width, height = 40, 40
-path_to_map = os.path.dirname(os.path.realpath(__file__)) + '\\maps\\Ex\\maps\\wide2.png'
+path_to_map = os.path.dirname(os.path.realpath(__file__)) + '\\maps\\Ex\\maps\\complex2 copy.png'
 # path_to_map = ''
 if path_to_map:
     img = Image.open(path_to_map)
@@ -22,7 +22,7 @@ model_params = {
     "width": width,
     "height": height,
     "robot_count": UserSettableParameter(
-        "slider", "Robots Count", 8, 1, 50
+        "slider", "Robots Count", 10, 1, 50
     ),
     "map": path_to_map,
     # "map": """{
@@ -31,10 +31,10 @@ model_params = {
     #  }""",
     "obstacle_free": False,
     'depth': UserSettableParameter(
-        "number", "Greedy planner depth", 1
+        "number", "Greedy planner depth", 9
     ),
-    'position_seed': 7,
-    'model_seed': 9,
+    'position_seed': 24,
+    'model_seed': 421,
     'map_seed': 11
 }
 
@@ -51,7 +51,7 @@ agent_bar = ColorfullBarChartModule(
     scope="agent",
     sorting="ascending",
     sort_by='unique_id',
-    canvas_width=700,
+    canvas_width=730,
     canvas_height=350
 )
 

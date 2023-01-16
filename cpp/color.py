@@ -18,8 +18,9 @@ class Color():
         ).hex_format()
 
     @staticmethod
-    def random(random):
-        return "#"+''.join([random.choice([char for char in '0123456789ABCDEF']) for j in range(6)])
+    def random(random, idx):
+        colors = ['#2e1f27', '#fa7921', '#993955', '#1768ac', '#9d6381', '#d11149', '#39a9db', '#e8998d', '#f5b700', '#673c00']
+        return colors[idx-1] if idx <= len(colors) else "#"+''.join([random.choice([char for char in '0123456789ABCDEF']) for j in range(6)])
 
 
 def compute_alpha(value, min_alpha = 0.3, step_count = 5):

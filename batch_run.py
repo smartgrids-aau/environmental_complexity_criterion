@@ -62,12 +62,9 @@ maps = list(glob.glob(os.path.dirname(os.path.realpath(__file__)) + '\\cpp\\maps
 
 # parameter lists for each parameter to be tested in batch run
 br_params = {
-    # "width": 25,
-    # "height": 25,
-    "robot_count": 10,
-    # "map": [os.path.dirname(os.path.realpath(__file__)) + '\\cpp\\maps\\Ex\\maps\\s\\simple1.png'],
+    "robot_count": [9, 12, 15],
     "map": maps,
-    'depth': 15,
+    'depth': [1, 3, 5, 7, 9],
 }
 
 if __name__ == "__main__":  

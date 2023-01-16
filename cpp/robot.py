@@ -12,7 +12,7 @@ class Robot(Agent):
         super().__init__(id, model)
         self.first_visits = 0
         self.planner = planner
-        self.color = Color.random(self.random)
+        self.color = Color.random(self.random, id)
         self.heading = heading
         self.wvisits = 0
 
@@ -50,12 +50,12 @@ class Robot(Agent):
 
         if destination != None:
             self.heading = (destination.x - self.x, destination.y - self.y)
-            is_ordinal_move = self.heading[0] * self.heading[1]
-            if is_ordinal_move:
-                can_move_ordinal = self.grid[self.x, destination.y][0].isEmpty or self.grid[destination.x, self.y][0].isEmpty
+            is_diagonal_move = self.heading[0] * self.heading[1]
+            if is_diagonal_move:
+                can_move_diagonal = self.grid[self.x, destination.y][0].isEmpty or self.grid[destination.x, self.y][0].isEmpty
 
             if destination.isEmpty:
-                if not is_ordinal_move or can_move_ordinal:
+                if not is_diagonal_move or can_move_diagonal:
                     self.model.grid.move_agent(self, destination.pos)
                     if not destination.isVisited:
                         self.first_visits += 1
