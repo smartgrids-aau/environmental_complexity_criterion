@@ -28,4 +28,4 @@ model_params = {
 NOTE: models using maps from image file ignore width and height parameters and use image size instead. 
 
 ## Batch run
-To run the model with different parameter sets, run `batch_run.py`. The result will be stored in `results/batch_run.csv`.
+To run the model with different parameter sets, execute `batch_run.py`. Locate the desired maps folder using `--path` argument. Run `batch_run.py -h` for more information.
