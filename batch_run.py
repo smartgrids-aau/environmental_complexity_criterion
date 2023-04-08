@@ -67,7 +67,7 @@ class BatchCoveragePathPlan(CoveragePathPlan):
 
 if __name__ == "__main__":
     
-    path = os.path.dirname(os.path.realpath(__file__))
+    path = os.path.dirname(os.path.realpath(__file__)) + '\\cpp\\maps'
     robot_count = [9, 12, 15]
     depths = [3,6,9]
     iterations = 3
