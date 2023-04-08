@@ -64,3 +64,4 @@ if __name__ == "__main__":
     br_df = br_df.groupby(['robot_count','map','depth', 'iteration']).apply(merge) 
 
     br_df.to_csv(path + '\\result.csv')
+    print('find results at: ', path + '\\result.csv')
