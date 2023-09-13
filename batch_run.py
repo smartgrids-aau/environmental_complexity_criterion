@@ -67,13 +67,15 @@ class BatchCoveragePathPlan(CoveragePathPlan):
 
 if __name__ == "__main__":
     
-    path = os.path.dirname(os.path.realpath(__file__))
+    os.chdir(os.path.dirname(os.path.realpath(__file__)))
     robot_count = [3,6,9,12]
     depths = [1,2,3]
     iterations = 3
     max_steps = 10000
     expriment_name = 'final7'
     maps_folder = 'final7'
+    
+
     def dir_path(string):
         if os.path.isdir(string):
             return string
@@ -102,7 +104,7 @@ if __name__ == "__main__":
     if args.path:
         path = args.path
 
-    maps = list(glob.glob(path + f'\\maps\\{maps_folder}\\*.png'))
+    maps = list(glob.glob(f'maps\\{maps_folder}\\*.png'))
 
     br_params = {
         "robot_count": robot_count,
@@ -119,5 +121,7 @@ if __name__ == "__main__":
     br_df = pd.DataFrame(data)
     br_df = br_df.groupby(['robot_count','map','depth', 'iteration']).apply(merge) 
 
-    br_df.to_csv(path + f'\\{expriment_name}.csv')
-    print('find results at: ', path + f'\\{expriment_name}.csv')
+    if not os.path.exists('results'):
+        os.mkdir('results')
+    br_df.to_csv(f'results\\{expriment_name}.csv')
+    print('find results at: ', f'{expriment_name}.csv')
