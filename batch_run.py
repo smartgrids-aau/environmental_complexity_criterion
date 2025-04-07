@@ -68,12 +68,12 @@ class BatchCoveragePathPlan(CoveragePathPlan):
 if __name__ == "__main__":
     
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
-    robot_count = [3,6,9,12]
-    depths = [1,2,3]
-    iterations = 3
+    robot_count = [4,5,6,7,8,9,10,12,14,16]
+    depths = [3]
+    iterations = 500
     max_steps = 10000
-    expriment_name = 'final7'
-    maps_folder = 'final7'
+    expriment_name = 'office_plans'
+    maps_folder = 'real'
     
 
     def dir_path(string):

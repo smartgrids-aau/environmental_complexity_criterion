@@ -17,6 +17,7 @@ from mesa.batchrunner import _model_run_func, _make_model_kwargs
 from multiprocessing import Pool
 import numpy as np
 from tqdm import tqdm
+import simStatus
 
 def batch_run_with_rngs(
     model_cls: Type[Model],
@@ -53,6 +54,9 @@ def batch_run_with_rngs(
     run_counter = count()
 
     results: List[Dict[str, Any]] = []
+    
+    total_iterations_ = 2 * len(parameters['robot_count']) * len(parameters['depth']) * iterations * len(parameters['map'])
+    print('total iterations =' ,total_iterations_)
 
     with tqdm(total_iterations, disable=not display_progress) as pbar:
         iteration_counter: Counter[Tuple[Any, ...]] = Counter()
@@ -61,6 +65,9 @@ def batch_run_with_rngs(
                 iteration_counter[paramValues[0:4]] += 1
                 iteration = iteration_counter[paramValues[0:4]]
                 run_id = next(run_counter)
+                prp = 100*run_id/total_iterations_
+                if int(prp)==prp:
+                    simStatus.sendStatus('db6ebd0566994d14a1767f14eb6fba81',int(prp),f'{run_id}/{total_iterations_}')
                 data = []
                 for run_data in rawdata:
                     out = {"RunId": run_id, "iteration": iteration - 1}
@@ -71,5 +78,6 @@ def batch_run_with_rngs(
                     data.append(out)
                 results.extend(data)
                 pbar.update()
-
+    
+    simStatus.sendStatus('db6ebd0566994d14a1767f14eb6fba81',100,f'{total_iterations}/{total_iterations}')
     return results
